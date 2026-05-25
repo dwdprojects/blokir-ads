@@ -1,0 +1,1 @@
+Aplikasi pemblokir iklan tingkat dewa berbasis DNS VPN tanpa root.

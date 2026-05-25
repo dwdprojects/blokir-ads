@@ -1,0 +1,10 @@
+Blokir Ads adalah aplikasi open-source premium yang memblokir iklan digital di aplikasi lain (game, utilitas, dll) menggunakan mekanisme DNS VPN lokal secara aman dan privat. Beroperasi murni dari perangkat Anda tanpa memerlukan akses *root*.
+
+Fitur Utama:
+* Per-App Targeting: Pilih aplikasi spesifik mana yang iklannya ingin Anda blokir.
+* Local Processing (Privacy First): Semua pencegatan DNS terjadi secara lokal. Data Anda tidak pernah dikirim ke server VPN pihak ketiga.
+* Comprehensive Blocklist: Secara *default* sudah menanam ratusan ribu *database* iklan jahat dan *tracker* (termasuk list Hagezi Multi Pro & Regional Asia).
+* Live DNS Terminal: Lihat trafik koneksi yang dicekal secara langsung melalui UI Terminal di dalam aplikasi.
+* Tap-to-Block Custom Domains: Jika masih ada iklan yang lolos, cukup ketuk domain mencurigakan di Terminal untuk mencekalnya secara permanen!
+
+Penafian (Disclaimer): Karena aplikasi ini berbasis DNS, aplikasi tidak dapat memblokir "First-Party Ads" (seperti iklan di YouTube atau postingan bersponsor Instagram) karena iklan tersebut menggunakan domain server yang sama dengan konten video aslinya.
