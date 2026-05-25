@@ -33,6 +33,26 @@ Unlike traditional ad blockers that modify the hosts file (which requires root) 
 
 ---
 
+## 🛑 What Can & Cannot Be Blocked (Limitations)
+
+Due to the nature of DNS-based ad blocking, not all advertisements can be intercepted. It is important to understand the difference between **Third-Party Ads** and **First-Party Ads**.
+
+### ✅ Successfully Blocked (Third-Party Ads)
+Apps that rely on external ad networks (like Google AdMob, Unity Ads, AppLovin, etc.) are successfully blocked. The ad requests are sent to different domains than the main content.
+- **Free Games** (e.g., Mobile Legends, Subway Surfers)
+- **Utility Apps** (e.g., File managers, photo editors)
+- **News Readers & Alternative Social Media**
+
+### ❌ Cannot Be Blocked (First-Party Ads)
+Giant tech platforms serve their ads from the **exact same domains** as their actual content. If we block these domains via DNS, the app itself will break entirely.
+- **YouTube / YouTube Music**: Video ads come from the same server as the actual videos (`googlevideo.com`).
+- **Instagram / Facebook**: Sponsored posts are injected directly into the feed from the same CDN (`cdninstagram.com`).
+- **TikTok & X (Twitter)**: Similar inline native ads.
+
+> **Best Practice:** For apps like YouTube, DNS ad blockers are not the right tool. You should use a modified client application (e.g., YouTube ReVanced or NewPipe) which removes ads at the code/API level instead of the network level.
+
+---
+
 ## 🏗️ Architecture & Tech Stack
 
 This project strictly follows **Clean Architecture** principles to separate concerns and ensure maintainability.

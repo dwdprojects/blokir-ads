@@ -12,6 +12,7 @@ import '../cubit/ad_blocker_state.dart';
 import '../widgets/blocker_toggle_widget.dart';
 import '../widgets/blocker_stats_widget.dart';
 import '../widgets/live_log_terminal.dart';
+import '../widgets/support_bottom_sheet.dart';
 
 class AdBlockerHomePage extends StatefulWidget {
   const AdBlockerHomePage({super.key});
@@ -45,6 +46,7 @@ class _AdBlockerHomePageState extends State<AdBlockerHomePage> {
 
   Widget _buildAppBar() {
     return SliverAppBar(
+      automaticallyImplyLeading: false,
       expandedHeight: 80,
       floating: true,
       backgroundColor: AppColors.background,
@@ -70,6 +72,21 @@ class _AdBlockerHomePageState extends State<AdBlockerHomePage> {
         ),
       ),
       actions: [
+        IconButton(
+          icon: const Icon(
+            Icons.favorite_rounded,
+            color: AppColors.textSecondary,
+          ),
+          tooltip: 'Dukungan',
+          onPressed: () {
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              backgroundColor: Colors.transparent,
+              builder: (context) => const SupportBottomSheet(),
+            );
+          },
+        ),
         IconButton(
           icon: const Icon(
             Icons.list_alt_rounded,
