@@ -4,6 +4,7 @@
 ![Android API](https://img.shields.io/badge/Android-API%2021%2B-brightgreen.svg)
 ![Architecture](https://img.shields.io/badge/Architecture-Clean%20Architecture-orange.svg)
 ![State Management](https://img.shields.io/badge/State_Management-BLoC%20%2F%20Cubit-purple.svg)
+![License](https://img.shields.io/badge/License-MIT-green.svg)
 
 **Blokir Ads** is a premium, open-source Android application built with Flutter that blocks digital advertisements in other applications using a local, device-only VPN. It operates without requiring root access and allows users to selectively target which apps they want to block ads on.
 
@@ -109,6 +110,12 @@ The APK will be available at `build/app/outputs/flutter-apk/app-release.apk`.
 ## ⚠️ Disclaimer
 
 This application is created for educational purposes and personal use to enhance user experience by removing intrusive advertisements. The developers are not responsible for any misuse of this application. Some apps may detect VPN usage and refuse to function until the VPN is disabled.
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for more details.
 
 ---
 *Built with ❤️ using Flutter & Kotlin.*
