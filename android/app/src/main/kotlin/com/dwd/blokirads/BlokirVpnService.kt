@@ -55,6 +55,68 @@ class BlokirVpnService : VpnService() {
             manager.addDomain(domain)
         }
 
+        // ─────────────────────────────────────────────────────────────────────
+        // WHITELIST — Domain yang TIDAK BOLEH diblokir sama sekali.
+        // Melindungi sistem reward, poin, klaim hadiah, dan fungsi inti app.
+        // Diutamakan di atas semua blocklist (static, dynamic, custom).
+        // ─────────────────────────────────────────────────────────────────────
+        val whitelistedDomains: Set<String> = setOf(
+            // ── Sistem Reward & Klaim Poin (Reward Apps) ──
+            // AppsFlyer — platform attribution untuk reward & poin (bukan hanya iklan)
+            "appsflyer.com", "onelink.me",
+            // Adjust — dipakai reward apps untuk verifikasi tonton konten & poin
+            "adjust.com", "adj.st", "adjustapi.com", "adjust.net.in",
+            // Branch — deep-link untuk klaim reward & referral
+            "branch.io", "app.link", "bnc.lt",
+            // Kochava & Singular — attribution reward install
+            "kochava.com", "singular.net",
+
+            // ── Firebase & Google Core (Login, Notifikasi, Analitik Aplikasi) ──
+            "firebase.googleapis.com", "firebaseinstallations.googleapis.com",
+            "firebaseio.com", "fcm.googleapis.com", "fcm-xmpp.googleapis.com",
+            "play.googleapis.com", "googleapis.com",
+            "accounts.google.com", "www.googleapis.com",
+            "crashlytics.com", "firebaselogging.googleapis.com",
+
+            // ── App Store & Update ──
+            "dl.google.com", "android.clients.google.com",
+            "connectivitycheck.gstatic.com", "gstatic.com",
+
+            // ── CDN & Streaming Konten (Video, Gambar, Audio) ──
+            // Cloudflare
+            "cloudflare.com", "cloudflare-dns.com", "cdn.cloudflare.com",
+            // Akamai — CDN video streaming populer
+            "akamaihd.net", "akamaized.net", "akamaistream.net", "edgekey.net",
+            // Fastly CDN
+            "fastly.net", "fastlylb.net",
+            // AWS (banyak apps pakai S3/CloudFront untuk host konten)
+            "amazonaws.com", "cloudfront.net",
+            // Azure
+            "azureedge.net", "azure.com",
+
+            // ── Platform Streaming & Konten Legal ──
+            // YouTube (konten + reward watch-time)
+            "youtube.com", "youtu.be", "ytimg.com", "googlevideo.com", "yt3.ggpht.com",
+            // TikTok (konten)
+            "tiktok.com", "tiktokcdn.com", "musical.ly",
+            // Instagram & Facebook konten
+            "instagram.com", "cdninstagram.com", "facebook.com", "fbcdn.net",
+            // Twitter/X
+            "twitter.com", "x.com", "twimg.com",
+
+            // ── Payment & Monetisasi Resmi ──
+            "paypal.com", "stripe.com", "braintreegateway.com",
+            "xendit.co", "midtrans.com", "doku.com", "ovo.id",
+            "gopay.co.id", "dana.id", "shopeepay.co.id",
+
+            // ── Security & Certificate ──
+            "letsencrypt.org", "ocsp.digicert.com", "ocsp.comodoca.com",
+            "crl.globalsign.com", "ocsp.globalsign.com",
+
+            // ── DNS Standar (Jangan Diblokir) ──
+            "dns.google", "cloudflare-dns.com", "dns.quad9.net"
+        )
+
         // Daftar domain iklan yang diblokir (DNS null-routing ke 0.0.0.0)
         val blockedDomains = setOf(
             // Google AdMob & Play Install Ads
@@ -343,7 +405,14 @@ class BlokirVpnService : VpnService() {
     private fun isDomainBlocked(domain: String): Boolean {
         val lower = domain.lowercase().trimEnd('.')
 
-        // 1. Cek custom blocklist buatan user (Prioritas Tertinggi)
+        // 0. WHITELIST DIUTAMAKAN — Domain reward, poin, CDN, dan fungsi inti
+        //    tidak boleh diblokir apapun yang terjadi.
+        if (isWhitelisted(lower)) {
+            Log.v(TAG, "WHITELISTED (allowed): $lower")
+            return false
+        }
+
+        // 1. Cek custom blocklist buatan user (Prioritas Tertinggi setelah whitelist)
         if (customBlocklistManager.isDomainBlocked(lower)) {
             return true
         }
@@ -358,6 +427,22 @@ class BlokirVpnService : VpnService() {
         return blockedDomains.any { blocked ->
             lower == blocked || lower.endsWith(".$blocked")
         }
+    }
+
+    /**
+     * Cek apakah domain atau parent domain-nya ada di whitelist.
+     * Contoh: "cdn.appsflyer.com" → parent "appsflyer.com" → WHITELISTED ✓
+     */
+    private fun isWhitelisted(domain: String): Boolean {
+        if (whitelistedDomains.contains(domain)) return true
+        // Cek parent domain secara rekursif
+        var idx = domain.indexOf('.')
+        while (idx != -1) {
+            val parent = domain.substring(idx + 1)
+            if (whitelistedDomains.contains(parent)) return true
+            idx = domain.indexOf('.', idx + 1)
+        }
+        return false
     }
 
     // ────────────────────────────────────────────────────────────
