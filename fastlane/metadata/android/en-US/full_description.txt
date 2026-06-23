@@ -1,10 +1,13 @@
-Blokir Ads adalah aplikasi open-source premium yang memblokir iklan digital di aplikasi lain (game, utilitas, dll) menggunakan mekanisme DNS VPN lokal secara aman dan privat. Beroperasi murni dari perangkat Anda tanpa memerlukan akses *root*.
+Blokir Ads is a premium, open-source Android application that blocks digital advertisements in other apps (games, utilities, etc.) using a local DNS VPN mechanism — safely and privately. It operates entirely on your device without requiring root access.
 
-Fitur Utama:
-* Per-App Targeting: Pilih aplikasi spesifik mana yang iklannya ingin Anda blokir.
-* Local Processing (Privacy First): Semua pencegatan DNS terjadi secara lokal. Data Anda tidak pernah dikirim ke server VPN pihak ketiga.
-* Comprehensive Blocklist: Secara *default* sudah menanam ratusan ribu *database* iklan jahat dan *tracker* (termasuk list Hagezi Multi Pro & Regional Asia).
-* Live DNS Terminal: Lihat trafik koneksi yang dicekal secara langsung melalui UI Terminal di dalam aplikasi.
-* Tap-to-Block Custom Domains: Jika masih ada iklan yang lolos, cukup ketuk domain mencurigakan di Terminal untuk mencekalnya secara permanen!
+<b>Key Features:</b>
+<ul>
+  <li><b>Per-App Targeting:</b> Choose exactly which apps you want to block ads in. The VPN tunnel only intercepts traffic from your selected apps.</li>
+  <li><b>Local Processing (Privacy First):</b> All DNS interception happens locally. Your data is never sent to a third-party VPN server.</li>
+  <li><b>Multi-Layer Blocklist:</b> Ships with a built-in static blocklist covering 30+ major ad networks, plus an auto-updated dynamic list of 100,000+ domains (Hagezi Multi Pro, Steven Black, AdGuard Mobile, Regional Asia).</li>
+  <li><b>Smart Whitelist:</b> Protects reward/points systems, CDN video streams, Firebase, and payment gateways from being accidentally blocked.</li>
+  <li><b>Live DNS Terminal:</b> Watch blocked connections in real time through an in-app terminal UI.</li>
+  <li><b>Tap-to-Block Custom Domains:</b> If an ad slips through, tap the suspicious domain in the terminal to permanently block it.</li>
+</ul>
 
-Penafian (Disclaimer): Karena aplikasi ini berbasis DNS, aplikasi tidak dapat memblokir "First-Party Ads" (seperti iklan di YouTube atau postingan bersponsor Instagram) karena iklan tersebut menggunakan domain server yang sama dengan konten video aslinya.
+<b>Disclaimer:</b> Because this app uses DNS-based blocking, it cannot block First-Party Ads (such as YouTube pre-roll ads or Instagram sponsored posts) since those ads are served from the same domain as the actual content.
