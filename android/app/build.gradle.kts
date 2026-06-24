@@ -1,8 +1,13 @@
+import com.android.build.gradle.internal.api.ApkVariantOutputImpl
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
+
+// ABI split version code mapping (required by F-Droid for per-architecture APKs)
+val abiCodes = mapOf("armeabi-v7a" to 1, "arm64-v8a" to 2, "x86_64" to 3)
 
 android {
     namespace = "com.dwd.blokirads"
@@ -31,6 +36,19 @@ android {
     }
 }
 
+// Override versionCode per ABI: base * 10 + abiCode
+// armeabi-v7a → versionCode 11, arm64-v8a → 12, x86_64 → 13
+android.applicationVariants.configureEach {
+    val variant = this
+    variant.outputs.forEach { output ->
+        val abiVersionCode = abiCodes[output.filters.find { it.filterType == "ABI" }?.identifier]
+        if (abiVersionCode != null) {
+            (output as ApkVariantOutputImpl).versionCodeOverride =
+                variant.versionCode * 10 + abiVersionCode
+        }
+    }
+}
+
 kotlin {
     compilerOptions {
         jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
@@ -40,3 +58,4 @@ kotlin {
 flutter {
     source = "../.."
 }
+
