@@ -288,6 +288,8 @@ class BlokirVpnService : VpnService() {
             isRunning.set(true)
             blockedCount.set(0)
             shouldRun.set(true)
+            
+            sendStatusToFlutter(true)
 
             startForeground(NOTIFICATION_ID, buildNotification())
 
@@ -307,6 +309,8 @@ class BlokirVpnService : VpnService() {
     private fun stopVpn() {
         shouldRun.set(false)
         isRunning.set(false)
+        
+        sendStatusToFlutter(false)
 
         vpnThread?.interrupt()
         vpnThread = null
@@ -582,6 +586,17 @@ class BlokirVpnService : VpnService() {
         android.os.Handler(android.os.Looper.getMainLooper()).post {
             try {
                 sink.success(logMessage)
+            } catch (e: Exception) {
+                // Ignore
+            }
+        }
+    }
+
+    private fun sendStatusToFlutter(isActive: Boolean) {
+        val sink = MainActivity.statusEventSink ?: return
+        android.os.Handler(android.os.Looper.getMainLooper()).post {
+            try {
+                sink.success(isActive)
             } catch (e: Exception) {
                 // Ignore
             }

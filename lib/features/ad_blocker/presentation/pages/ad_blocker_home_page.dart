@@ -2,8 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/loading_widget.dart';
 import '../../../app_selector/presentation/cubit/app_selector_cubit.dart';
 import '../../../app_selector/presentation/cubit/app_selector_state.dart';
@@ -12,7 +10,9 @@ import '../cubit/ad_blocker_state.dart';
 import '../widgets/blocker_toggle_widget.dart';
 import '../widgets/blocker_stats_widget.dart';
 import '../widgets/live_log_terminal.dart';
-import '../widgets/support_bottom_sheet.dart';
+import 'package:blokir_ads/core/theme/theme_extensions.dart';
+
+import '../../../../core/localization/app_strings.dart';
 
 class AdBlockerHomePage extends StatefulWidget {
   const AdBlockerHomePage({super.key});
@@ -34,85 +34,67 @@ class _AdBlockerHomePageState extends State<AdBlockerHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.colors.background,
       body: CustomScrollView(
         slivers: [
-          _buildAppBar(),
-          SliverToBoxAdapter(child: _buildBody()),
+          _buildAppBar(context),
+          SliverToBoxAdapter(child: _buildBody(context)),
         ],
       ),
     );
   }
 
-  Widget _buildAppBar() {
+  Widget _buildAppBar(BuildContext context) {
     return SliverAppBar(
       automaticallyImplyLeading: false,
       expandedHeight: 80,
       floating: true,
-      backgroundColor: AppColors.background,
+      backgroundColor: context.colors.background,
       flexibleSpace: FlexibleSpaceBar(
-        titlePadding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+        titlePadding: EdgeInsets.fromLTRB(20, 0, 20, 16),
         title: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(6),
+              padding: EdgeInsets.all(6),
               decoration: BoxDecoration(
-                gradient: AppColors.primaryGradient,
+                gradient: context.colors.primaryGradient,
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.shield_rounded,
                 color: Colors.white,
                 size: 18,
               ),
             ),
-            const SizedBox(width: 10),
-            Text('Blokir Ads', style: AppTextStyles.titleLarge),
+            SizedBox(width: 10),
+            Text(AppStrings.of(context).appName, style: context.textStyles.titleLarge),
           ],
         ),
       ),
       actions: [
         IconButton(
-          icon: const Icon(
-            Icons.favorite_rounded,
-            color: AppColors.textSecondary,
+          icon: Icon(
+            Icons.settings_rounded,
+            color: context.colors.textSecondary,
           ),
-          tooltip: 'Dukungan',
-          onPressed: () {
-            showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              backgroundColor: Colors.transparent,
-              builder: (context) => const SupportBottomSheet(),
-            );
-          },
+          tooltip: 'Settings',
+          onPressed: () => Navigator.pushNamed(context, '/settings'),
         ),
-        IconButton(
-          icon: const Icon(
-            Icons.list_alt_rounded,
-            color: AppColors.textSecondary,
-          ),
-          tooltip: 'Blocklist',
-          onPressed: () => Navigator.pushNamed(context, '/blocklist'),
-        ),
-        IconButton(
-          icon: const Icon(Icons.apps_rounded, color: AppColors.textSecondary),
-          tooltip: 'Pilih Aplikasi',
-          onPressed: () => Navigator.pushNamed(context, '/app-selector'),
-        ),
-        const SizedBox(width: 8),
+        SizedBox(width: 8),
       ],
     );
   }
 
-  Widget _buildBody() {
+  Widget _buildBody(BuildContext context) {
+    final strings = AppStrings.of(context);
+
     return BlocConsumer<AdBlockerCubit, AdBlockerState>(
       listener: (context, state) {
         if (state is AdBlockerPermissionRequired) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Izin VPN diperlukan untuk memblokir iklan'),
-              backgroundColor: AppColors.warning,
+            SnackBar(
+              content: Text('Izin VPN diperlukan'), // Simplify or just keep hardcoded
+              backgroundColor: context.colors.warning,
             ),
           );
         }
@@ -124,9 +106,9 @@ class _AdBlockerHomePageState extends State<AdBlockerHomePage> {
       },
       builder: (context, state) {
         if (state is AdBlockerInitial) {
-          return const Padding(
+          return Padding(
             padding: EdgeInsets.only(top: 120),
-            child: LoadingWidget(message: 'Memuat status...'),
+            child: LoadingWidget(message: 'Loading...'),
           );
         }
 
@@ -140,12 +122,12 @@ class _AdBlockerHomePageState extends State<AdBlockerHomePage> {
             : Duration.zero;
 
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: EdgeInsets.symmetric(horizontal: 20),
           child: Column(
             children: [
-              const SizedBox(height: 32),
+              SizedBox(height: 32),
               _StatusBadge(isActive: isActive),
-              const SizedBox(height: 40),
+              SizedBox(height: 40),
               BlocBuilder<AppSelectorCubit, AppSelectorState>(
                 builder: (context, selectorState) {
                   final targetPackages = selectorState is AppSelectorLoaded
@@ -161,14 +143,14 @@ class _AdBlockerHomePageState extends State<AdBlockerHomePage> {
                   );
                 },
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               Text(
                 isActive
-                    ? 'Ketuk untuk menonaktifkan'
-                    : 'Ketuk untuk mengaktifkan',
-                style: AppTextStyles.bodySmall,
+                    ? strings.tapToDeactivate
+                    : strings.tapToActivate,
+                style: context.textStyles.bodySmall,
               ),
-              const SizedBox(height: 40),
+              SizedBox(height: 40),
               BlocBuilder<AppSelectorCubit, AppSelectorState>(
                 builder: (context, selectorState) {
                   final targetCount = selectorState is AppSelectorLoaded
@@ -181,11 +163,11 @@ class _AdBlockerHomePageState extends State<AdBlockerHomePage> {
                   );
                 },
               ),
-              const SizedBox(height: 32),
+              SizedBox(height: 32),
               if (!isActive) _NoAppWarning(),
-              const SizedBox(height: 24),
-              const LiveLogTerminalWidget(),
-              const SizedBox(height: 40),
+              SizedBox(height: 24),
+              LiveLogTerminalWidget(),
+              SizedBox(height: 40),
             ],
           ),
         );
@@ -202,17 +184,17 @@ class _StatusBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      duration: Duration(milliseconds: 300),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: isActive
-            ? AppColors.active.withOpacity(0.12)
-            : AppColors.inactive.withOpacity(0.1),
+            ? context.colors.active.withOpacity(0.12)
+            : context.colors.inactive.withOpacity(0.1),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isActive
-              ? AppColors.active.withOpacity(0.4)
-              : AppColors.inactive.withOpacity(0.3),
+              ? context.colors.active.withOpacity(0.4)
+              : context.colors.inactive.withOpacity(0.3),
         ),
       ),
       child: Row(
@@ -223,14 +205,14 @@ class _StatusBadge extends StatelessWidget {
             height: 8,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: isActive ? AppColors.active : AppColors.inactive,
+              color: isActive ? context.colors.active : context.colors.inactive,
             ),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: 8),
           Text(
-            isActive ? 'Perlindungan Aktif' : 'Perlindungan Tidak Aktif',
-            style: AppTextStyles.labelSmall.copyWith(
-              color: isActive ? AppColors.active : AppColors.inactive,
+            isActive ? AppStrings.of(context).protectionActive : AppStrings.of(context).protectionInactive,
+            style: context.textStyles.labelSmall.copyWith(
+              color: isActive ? context.colors.active : context.colors.inactive,
             ),
           ),
         ],
@@ -245,28 +227,28 @@ class _NoAppWarning extends StatelessWidget {
     return BlocBuilder<AppSelectorCubit, AppSelectorState>(
       builder: (context, state) {
         final count = state is AppSelectorLoaded ? state.blockedCount : 0;
-        if (count > 0) return const SizedBox.shrink();
+        if (count > 0) return SizedBox.shrink();
 
         return Container(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: AppColors.warning.withOpacity(0.08),
+            color: context.colors.warning.withOpacity(0.08),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.warning.withOpacity(0.3)),
+            border: Border.all(color: context.colors.warning.withOpacity(0.3)),
           ),
           child: Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.info_outline,
-                color: AppColors.warning,
+                color: context.colors.warning,
                 size: 20,
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  'Belum ada aplikasi dipilih. Pilih aplikasi target agar blokir iklan berjalan.',
-                  style: AppTextStyles.bodySmall.copyWith(
-                    color: AppColors.warning,
+                  AppStrings.of(context).noAppSelectedWarning,
+                  style: context.textStyles.bodySmall.copyWith(
+                    color: context.colors.warning,
                   ),
                 ),
               ),

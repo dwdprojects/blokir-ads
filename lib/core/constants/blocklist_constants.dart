@@ -3,7 +3,7 @@
 class BlocklistConstants {
   BlocklistConstants._();
 
-  static const List<String> defaultBlockedDomains = [
+  static List<String> defaultBlockedDomains = [
     // Google AdMob
     'admob.com',
     'googleadservices.com',
@@ -95,7 +95,7 @@ class BlocklistConstants {
     'taboola.com',
   ];
 
-  static const Map<String, List<String>> domainsByCategory = {
+  static Map<String, List<String>> domainsByCategory = {
     'Google Ads': [
       'admob.com',
       'googleadservices.com',

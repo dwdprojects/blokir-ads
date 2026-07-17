@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
+import 'package:blokir_ads/core/theme/theme_extensions.dart';
 
 class AppUtils {
   AppUtils._();
@@ -23,8 +24,8 @@ class AppUtils {
     return '${seconds}s';
   }
 
-  static Color getStatusColor(bool isActive) =>
-      isActive ? AppColors.active : AppColors.inactive;
+  static Color getStatusColor(BuildContext context, bool isActive) =>
+      isActive ? context.colors.active : context.colors.inactive;
 
   static ImageProvider? buildAppIcon(Uint8List? iconBytes) {
     if (iconBytes == null || iconBytes.isEmpty) return null;

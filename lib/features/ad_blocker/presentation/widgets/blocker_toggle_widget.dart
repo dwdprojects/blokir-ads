@@ -1,8 +1,9 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
+import 'package:blokir_ads/core/theme/theme_extensions.dart';
+
+import '../../../../core/localization/app_strings.dart';
 
 class BlockerToggleWidget extends StatefulWidget {
   const BlockerToggleWidget({
@@ -30,7 +31,7 @@ class _BlockerToggleWidgetState extends State<BlockerToggleWidget>
     super.initState();
     _pulseController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2),
+      duration: Duration(seconds: 2),
     )..repeat(reverse: true);
     _pulseAnim = Tween<double>(begin: 1.0, end: 1.12).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
@@ -57,9 +58,10 @@ class _BlockerToggleWidgetState extends State<BlockerToggleWidget>
   @override
   Widget build(BuildContext context) {
     final gradient = widget.isActive
-        ? AppColors.activeGradient
-        : AppColors.inactiveGradient;
-    final glowColor = widget.isActive ? AppColors.active : AppColors.textHint;
+        ? context.colors.activeGradient
+        : context.colors.inactiveGradient;
+    final glowColor = widget.isActive ? context.colors.active : context.colors.textHint;
+    final strings = AppStrings.of(context);
 
     return GestureDetector(
       onTap: widget.isLoading ? null : widget.onTap,
@@ -84,7 +86,7 @@ class _BlockerToggleWidgetState extends State<BlockerToggleWidget>
             ],
           ),
           child: widget.isLoading
-              ? const Center(
+              ? Center(
                   child: CircularProgressIndicator(
                     color: Colors.white,
                     strokeWidth: 3,
@@ -100,10 +102,10 @@ class _BlockerToggleWidgetState extends State<BlockerToggleWidget>
                       size: 64,
                       color: Colors.white,
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8),
                     Text(
-                      widget.isActive ? 'AKTIF' : 'NONAKTIF',
-                      style: AppTextStyles.labelLarge.copyWith(
+                      widget.isActive ? strings.active : strings.inactive,
+                      style: context.textStyles.labelLarge.copyWith(
                         color: Colors.white,
                         letterSpacing: 2,
                         fontSize: 12,

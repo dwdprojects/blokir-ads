@@ -4,8 +4,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../cubit/ad_blocker_cubit.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
+import 'package:blokir_ads/core/theme/theme_extensions.dart';
+
+import '../../../../core/localization/app_strings.dart';
 
 class LiveLogTerminalWidget extends StatefulWidget {
   const LiveLogTerminalWidget({super.key});
@@ -40,7 +41,7 @@ class _LiveLogTerminalWidgetState extends State<LiveLogTerminalWidget> {
         if (_scrollController.hasClients) {
           _scrollController.animateTo(
             _scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 200),
+            duration: Duration(milliseconds: 200),
             curve: Curves.easeOut,
           );
         }
@@ -57,19 +58,21 @@ class _LiveLogTerminalWidgetState extends State<LiveLogTerminalWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final strings = AppStrings.of(context);
+    
     return Container(
       height: 200,
       width: double.infinity,
-      padding: const EdgeInsets.all(12),
+      padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFF0F172A), // Dark terminal background
+        color: Color(0xFF0F172A), // Dark terminal background
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.primary.withOpacity(0.3)),
+        border: Border.all(color: context.colors.primary.withOpacity(0.3)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.5),
             blurRadius: 10,
-            offset: const Offset(0, 4),
+            offset: Offset(0, 4),
           ),
         ],
       ),
@@ -78,34 +81,34 @@ class _LiveLogTerminalWidgetState extends State<LiveLogTerminalWidget> {
         children: [
           Row(
             children: [
-              const Icon(Icons.terminal, color: AppColors.primary, size: 16),
-              const SizedBox(width: 8),
+              Icon(Icons.terminal, color: context.colors.primary, size: 16),
+              SizedBox(width: 8),
               Text(
-                'Live DNS Terminal',
-                style: AppTextStyles.labelSmall.copyWith(
-                  color: AppColors.primary,
+                strings.liveDnsTerminal,
+                style: context.textStyles.labelSmall.copyWith(
+                  color: context.colors.primary,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.2,
                 ),
               ),
-              const Spacer(),
+              Spacer(),
               Container(
                 width: 8,
                 height: 8,
-                decoration: const BoxDecoration(
-                  color: AppColors.warning,
+                decoration: BoxDecoration(
+                  color: context.colors.warning,
                   shape: BoxShape.circle,
                 ),
               ),
             ],
           ),
-          const Divider(color: Colors.white24, height: 16),
+          Divider(color: Colors.white24, height: 16),
           Expanded(
             child: _logs.isEmpty
                 ? Center(
                     child: Text(
-                      'Menunggu DNS query...',
-                      style: AppTextStyles.bodyMedium.copyWith(
+                      strings.waitingDnsQuery,
+                      style: context.textStyles.bodyMedium.copyWith(
                         color: Colors.white54,
                         fontFamily: 'monospace',
                         fontSize: 12,
@@ -126,7 +129,7 @@ class _LiveLogTerminalWidgetState extends State<LiveLogTerminalWidget> {
                       }
 
                       return Padding(
-                        padding: const EdgeInsets.only(bottom: 4),
+                        padding: EdgeInsets.only(bottom: 4),
                         child: isBlocked || domain.isEmpty
                             ? Text(
                                 '> $log',
@@ -134,15 +137,15 @@ class _LiveLogTerminalWidgetState extends State<LiveLogTerminalWidget> {
                                   fontFamily: 'monospace',
                                   fontSize: 11,
                                   color: isBlocked
-                                      ? AppColors.warning
-                                      : const Color(0xFF10B981),
+                                      ? context.colors.warning
+                                      : Color(0xFF10B981),
                                 ),
                               )
                             : GestureDetector(
                                 onTap: () => _showBlockConfirmationDialog(domain),
                                 child: Text(
                                   '> $log',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontFamily: 'monospace',
                                     fontSize: 11,
                                     color: Color(0xFF10B981), // Emerald green
@@ -161,40 +164,42 @@ class _LiveLogTerminalWidgetState extends State<LiveLogTerminalWidget> {
   }
 
   void _showBlockConfirmationDialog(String domain) {
+    final strings = AppStrings.of(context);
+
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.surface,
+        backgroundColor: context.colors.surface,
         title: Text(
-          'Blokir Domain?',
-          style: AppTextStyles.titleMedium,
+          strings.blockDomainTitle,
+          style: context.textStyles.titleMedium,
         ),
         content: Text(
-          'Apakah Anda yakin ingin memblokir iklan dari:\n\n$domain\n\nJika ini bukan iklan, aplikasi target mungkin akan bermasalah.',
-          style: AppTextStyles.bodyMedium,
+          strings.blockDomainMessage(domain),
+          style: context.textStyles.bodyMedium,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text('Batal', style: AppTextStyles.labelSmall),
+            child: Text(strings.cancel, style: context.textStyles.labelSmall),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.warning,
+              backgroundColor: context.colors.warning,
             ),
             onPressed: () {
               Navigator.pop(ctx);
               context.read<AdBlockerCubit>().blockCustomDomain(domain);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('$domain berhasil diblokir!'),
-                  backgroundColor: AppColors.warning,
+                  content: Text(strings.domainBlockedSuccess(domain)),
+                  backgroundColor: context.colors.warning,
                 ),
               );
             },
             child: Text(
-              'Blokir Sekarang',
-              style: AppTextStyles.labelSmall.copyWith(color: Colors.black),
+              strings.blockNow,
+              style: context.textStyles.labelSmall.copyWith(color: Colors.black),
             ),
           ),
         ],

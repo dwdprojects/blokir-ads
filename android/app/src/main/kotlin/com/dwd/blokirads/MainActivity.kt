@@ -20,10 +20,13 @@ class MainActivity : FlutterActivity() {
         private const val VPN_CHANNEL = "com.blokirads/vpn"
         private const val APPS_CHANNEL = "com.blokirads/apps"
         private const val LOGS_CHANNEL = "com.blokirads/logs"
+        private const val STATUS_CHANNEL = "com.blokirads/status"
         private const val VPN_REQUEST_CODE = 1001
 
         // EventSink untuk stream log real-time ke Flutter
         var logEventSink: EventChannel.EventSink? = null
+        // EventSink untuk status aktif/nonaktif VPN
+        var statusEventSink: EventChannel.EventSink? = null
     }
 
     private var pendingResult: MethodChannel.Result? = null
@@ -38,6 +41,7 @@ class MainActivity : FlutterActivity() {
         setupVpnChannel(flutterEngine)
         setupAppsChannel(flutterEngine)
         setupLogsChannel(flutterEngine)
+        setupStatusChannel(flutterEngine)
     }
 
     // ────────────────────────────────────────────────────────────
@@ -53,6 +57,25 @@ class MainActivity : FlutterActivity() {
 
                 override fun onCancel(arguments: Any?) {
                     logEventSink = null
+                }
+            })
+    }
+
+    // ────────────────────────────────────────────────────────────
+    // Status Channel
+    // ────────────────────────────────────────────────────────────
+
+    private fun setupStatusChannel(flutterEngine: FlutterEngine) {
+        EventChannel(flutterEngine.dartExecutor.binaryMessenger, STATUS_CHANNEL)
+            .setStreamHandler(object : EventChannel.StreamHandler {
+                override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
+                    statusEventSink = events
+                    // Langsung kirim status saat ini ketika mulai mendengarkan
+                    events?.success(BlokirVpnService.isRunning.get())
+                }
+
+                override fun onCancel(arguments: Any?) {
+                    statusEventSink = null
                 }
             })
     }

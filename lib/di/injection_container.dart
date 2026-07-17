@@ -30,6 +30,9 @@ import '../features/blocklist/domain/repositories/blocklist_repository.dart';
 import '../features/blocklist/domain/usecases/blocklist_usecases.dart';
 import '../features/blocklist/presentation/cubit/blocklist_cubit.dart';
 
+// Settings
+import '../features/settings/presentation/cubit/settings_cubit.dart';
+
 final sl = GetIt.instance;
 
 Future<void> initDependencies() async {
@@ -39,7 +42,7 @@ Future<void> initDependencies() async {
 
   // ─── App Selector ───────────────────────────────────────────
   sl.registerLazySingleton<InstalledAppsDatasource>(
-    () => const InstalledAppsDatasourceImpl(),
+    () => InstalledAppsDatasourceImpl(),
   );
   sl.registerLazySingleton<AppSelectorRepository>(
     () => AppSelectorRepositoryImpl(
@@ -62,7 +65,7 @@ Future<void> initDependencies() async {
 
   // ─── Ad Blocker ─────────────────────────────────────────────
   sl.registerLazySingleton<VpnServiceDatasource>(
-    () => const VpnServiceDatasourceImpl(),
+    () => VpnServiceDatasourceImpl(),
   );
   sl.registerLazySingleton<AdBlockerRepository>(
     () => AdBlockerRepositoryImpl(datasource: sl<VpnServiceDatasource>()),
@@ -103,5 +106,10 @@ Future<void> initDependencies() async {
       addDomain: sl<AddDomainUsecase>(),
       removeDomain: sl<RemoveDomainUsecase>(),
     ),
+  );
+
+  // ─── Settings ───────────────────────────────────────────────
+  sl.registerFactory(
+    () => SettingsCubit(prefs: sl<SharedPreferences>()),
   );
 }

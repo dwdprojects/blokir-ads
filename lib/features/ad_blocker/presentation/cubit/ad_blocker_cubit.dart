@@ -19,19 +19,22 @@ class AdBlockerCubit extends Cubit<AdBlockerState> {
        _startBlocker = startBlocker,
        _stopBlocker = stopBlocker,
        _repository = repository,
-       super(const AdBlockerInitial());
+       super(AdBlockerInitial()) {
+    _statusSubscription = _repository.statusStream.listen(_handleStatusChanged);
+  }
 
   final GetBlockerStatusUsecase _getStatus;
   final StartBlockerUsecase _startBlocker;
   final StopBlockerUsecase _stopBlocker;
   final AdBlockerRepository _repository;
+  StreamSubscription<bool>? _statusSubscription;
   Timer? _uptimeTimer;
   int _uptimeSeconds = 0;
 
   Stream<String> get logStream => _repository.logStream;
 
   Future<void> loadStatus() async {
-    emit(const AdBlockerLoading());
+    emit(AdBlockerLoading());
     try {
       final status = await _getStatus();
       _emit(status);
@@ -44,26 +47,20 @@ class AdBlockerCubit extends Cubit<AdBlockerState> {
     final current = state;
     final isActive = current is AdBlockerActive || current is AdBlockerLoading;
 
-    emit(const AdBlockerLoading());
+    emit(AdBlockerLoading());
 
     try {
       if (isActive) {
         await _stopBlocker();
-        _stopUptimeTimer();
-        final status = await _getStatus();
-        _emit(status);
+        // UI updates will be handled by _statusSubscription
       } else {
         final hasPermission = await _repository.requestPermission();
         if (!hasPermission) {
-          emit(const AdBlockerPermissionRequired());
+          emit(AdBlockerPermissionRequired());
           return;
         }
-        final started = await _startBlocker(targetPackages: targetPackages);
-        if (started) {
-          _startUptimeTimer();
-        }
-        final status = await _getStatus();
-        _emit(status);
+        await _startBlocker(targetPackages: targetPackages);
+        // UI updates will be handled by _statusSubscription
       }
     } catch (e) {
       emit(AdBlockerError('Operasi gagal: $e'));
@@ -89,10 +86,22 @@ class AdBlockerCubit extends Cubit<AdBlockerState> {
     }
   }
 
+  Future<void> _handleStatusChanged(bool isActive) async {
+    final status = await _getStatus();
+    if (isActive) {
+      if (_uptimeTimer == null) {
+        _startUptimeTimer();
+      }
+    } else {
+      _stopUptimeTimer();
+    }
+    _emit(status);
+  }
+
   void _startUptimeTimer() {
     _uptimeSeconds = 0;
     _uptimeTimer?.cancel();
-    _uptimeTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+    _uptimeTimer = Timer.periodic(Duration(seconds: 1), (_) {
       _uptimeSeconds++;
       final current = state;
       if (current is AdBlockerActive) {
@@ -115,6 +124,7 @@ class AdBlockerCubit extends Cubit<AdBlockerState> {
 
   @override
   Future<void> close() {
+    _statusSubscription?.cancel();
     _stopUptimeTimer();
     return super.close();
   }

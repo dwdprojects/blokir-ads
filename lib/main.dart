@@ -13,7 +13,7 @@ Future<void> main() async {
   ]);
 
   // Transparent status bar
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.light,
     systemNavigationBarColor: Color(0xFF0A0E1A),
@@ -23,5 +23,5 @@ Future<void> main() async {
   // Initialize dependencies
   await initDependencies();
 
-  runApp(const App());
+  runApp(App());
 }

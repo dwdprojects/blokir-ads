@@ -1,26 +1,27 @@
 class AppConstants {
   AppConstants._();
 
-  static const String appName = 'Blokir Ads';
-  static const String appVersion = '1.0.0';
+  static String appName = 'Blokir Ads';
+  static String appVersion = '1.0.0';
 
   // SharedPreferences keys
-  static const String keyBlockedApps = 'blocked_apps';
-  static const String keyBlockerActive = 'blocker_active';
-  static const String keyCustomBlocklist = 'custom_blocklist';
-  static const String keyAdsBlockedCount = 'ads_blocked_count';
-  static const String keyTotalUptime = 'total_uptime_seconds';
+  static String keyBlockedApps = 'blocked_apps';
+  static String keyBlockerActive = 'blocker_active';
+  static String keyCustomBlocklist = 'custom_blocklist';
+  static String keyAdsBlockedCount = 'ads_blocked_count';
+  static String keyTotalUptime = 'total_uptime_seconds';
 
   // VPN Method Channel
-  static const String vpnChannelName = 'com.blokirads/vpn';
-  static const String appsChannelName = 'com.blokirads/apps';
-  static const String logsChannelName = 'com.blokirads/logs';
+  static String vpnChannelName = 'com.blokirads/vpn';
+  static String appsChannelName = 'com.blokirads/apps';
+  static String logsChannelName = 'com.blokirads/logs';
+  static String statusChannelName = 'com.blokirads/status';
 
-  static const String methodStartVpn = 'startVpn';
-  static const String methodStopVpn = 'stopVpn';
-  static const String methodGetStatus = 'getStatus';
-  static const String methodRequestPermission = 'requestPermission';
-  static const String methodAddCustomDomain = 'addCustomDomain';
+  static String methodStartVpn = 'startVpn';
+  static String methodStopVpn = 'stopVpn';
+  static String methodGetStatus = 'getStatus';
+  static String methodRequestPermission = 'requestPermission';
+  static String methodAddCustomDomain = 'addCustomDomain';
 
   // Defaults
   static const int defaultBlockedCount = 0;

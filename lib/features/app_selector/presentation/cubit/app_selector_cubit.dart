@@ -11,13 +11,13 @@ class AppSelectorCubit extends Cubit<AppSelectorState> {
     required ToggleAppBlockUsecase toggleAppBlock,
   }) : _getInstalledApps = getInstalledApps,
        _toggleAppBlock = toggleAppBlock,
-       super(const AppSelectorInitial());
+       super(AppSelectorInitial());
 
   final GetInstalledAppsUsecase _getInstalledApps;
   final ToggleAppBlockUsecase _toggleAppBlock;
 
   Future<void> loadApps() async {
-    emit(const AppSelectorLoading());
+    emit(AppSelectorLoading());
     try {
       final apps = await _getInstalledApps();
       final blocked = apps

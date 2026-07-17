@@ -8,7 +8,7 @@ abstract class InstalledAppsDatasource {
 /// Datasource menggunakan MethodChannel ke Android native
 /// untuk mendapatkan daftar installed apps dengan icon.
 class InstalledAppsDatasourceImpl implements InstalledAppsDatasource {
-  const InstalledAppsDatasourceImpl();
+  InstalledAppsDatasourceImpl();
 
   static const _channel = MethodChannel('com.blokirads/apps');
 

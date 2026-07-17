@@ -2,10 +2,9 @@
 
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/utils/app_utils.dart';
 import '../../domain/entities/installed_app_entity.dart';
+import 'package:blokir_ads/core/theme/theme_extensions.dart';
 
 class AppListTile extends StatelessWidget {
   const AppListTile({super.key, required this.app, required this.onToggle});
@@ -16,32 +15,32 @@ class AppListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      duration: Duration(milliseconds: 200),
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       decoration: BoxDecoration(
         color: app.isBlocked
-            ? AppColors.active.withOpacity(0.06)
-            : AppColors.surface,
+            ? context.colors.active.withOpacity(0.06)
+            : context.colors.surface,
         borderRadius: .circular(12),
         border: Border.all(
           color: app.isBlocked
-              ? AppColors.active.withOpacity(0.3)
-              : AppColors.border,
+              ? context.colors.active.withOpacity(0.3)
+              : context.colors.border,
           width: 1,
         ),
       ),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         leading: _AppIcon(iconBytes: app.icon, appName: app.appName),
         title: Text(
           app.appName,
-          style: AppTextStyles.bodyLarge,
+          style: context.textStyles.bodyLarge,
           maxLines: 1,
           overflow: .ellipsis,
         ),
         subtitle: Text(
           app.packageName,
-          style: AppTextStyles.bodySmall,
+          style: context.textStyles.bodySmall,
           maxLines: 1,
           overflow: .ellipsis,
         ),
@@ -70,14 +69,14 @@ class _AppIcon extends StatelessWidget {
       width: 44,
       height: 44,
       decoration: BoxDecoration(
-        gradient: AppColors.primaryGradient,
+        gradient: context.colors.primaryGradient,
         borderRadius: .circular(10),
       ),
       child: Center(
         child: Text(
           AppUtils.getInitials(appName),
-          style: const TextStyle(
-            color: AppColors.background,
+          style: TextStyle(
+            color: context.colors.background,
             fontWeight: FontWeight.w700,
             fontSize: 16,
           ),
@@ -100,10 +99,10 @@ class _BlockSwitch extends StatelessWidget {
       child: Switch(
         value: isBlocked,
         onChanged: onToggle,
-        activeColor: AppColors.active,
-        activeTrackColor: AppColors.active.withOpacity(0.3),
-        inactiveThumbColor: AppColors.textHint,
-        inactiveTrackColor: AppColors.surfaceVariant,
+        activeColor: context.colors.active,
+        activeTrackColor: context.colors.active.withOpacity(0.3),
+        inactiveThumbColor: context.colors.textHint,
+        inactiveTrackColor: context.colors.surfaceVariant,
       ),
     );
   }

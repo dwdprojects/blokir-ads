@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme/app_colors.dart';
-import '../theme/app_text_styles.dart';
+import 'package:blokir_ads/core/theme/theme_extensions.dart';
 
 class LoadingWidget extends StatelessWidget {
   const LoadingWidget({
@@ -21,16 +20,16 @@ class LoadingWidget extends StatelessWidget {
           SizedBox(
             width: size,
             height: size,
-            child: const CircularProgressIndicator(
+            child: CircularProgressIndicator(
               strokeWidth: 2.5,
-              valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+              valueColor: AlwaysStoppedAnimation<Color>(context.colors.primary),
             ),
           ),
           if (message != null) ...[
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Text(
               message!,
-              style: AppTextStyles.bodyMedium,
+              style: context.textStyles.bodyMedium,
               textAlign: .center,
             ),
           ],

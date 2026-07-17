@@ -7,11 +7,12 @@ abstract class VpnServiceDatasource {
   Future<BlockerStatusEntity> getStatus();
   Future<bool> requestPermission();
   Stream<String> get logStream;
+  Stream<bool> get statusStream;
   Future<bool> addCustomDomain(String domain);
 }
 
 class VpnServiceDatasourceImpl implements VpnServiceDatasource {
-  const VpnServiceDatasourceImpl();
+  VpnServiceDatasourceImpl();
 
   @override
   Future<bool> requestPermission() => VpnUtils.requestVpnPermission();
@@ -37,6 +38,9 @@ class VpnServiceDatasourceImpl implements VpnServiceDatasource {
 
   @override
   Stream<String> get logStream => VpnUtils.logStream;
+  
+  @override
+  Stream<bool> get statusStream => VpnUtils.statusStream;
 
   @override
   Future<bool> addCustomDomain(String domain) =>

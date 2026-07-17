@@ -27,7 +27,7 @@ class BlockerStatusEntity extends Equatable {
     );
   }
 
-  static BlockerStatusEntity get initial => const BlockerStatusEntity(
+  static BlockerStatusEntity get initial => BlockerStatusEntity(
         isActive: false,
         blockedCount: 0,
         uptime: Duration.zero,

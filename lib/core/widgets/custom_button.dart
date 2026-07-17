@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
+import 'package:blokir_ads/core/theme/theme_extensions.dart';
 
 class CustomButton extends StatelessWidget {
   const CustomButton({
@@ -24,7 +25,7 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final buttonColor = color ?? AppColors.primary;
+    final buttonColor = color ?? context.colors.primary;
 
     if (isOutlined) {
       return SizedBox(
@@ -34,12 +35,12 @@ class CustomButton extends StatelessWidget {
           style: OutlinedButton.styleFrom(
             foregroundColor: buttonColor,
             side: BorderSide(color: buttonColor),
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 14),
             shape: RoundedRectangleBorder(
               borderRadius: .circular(12),
             ),
           ),
-          child: _buildChild(buttonColor),
+          child: _buildChild(context, buttonColor),
         ),
       );
     }
@@ -50,19 +51,19 @@ class CustomButton extends StatelessWidget {
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: buttonColor,
-          foregroundColor: AppColors.background,
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+          foregroundColor: context.colors.background,
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 14),
           shape: RoundedRectangleBorder(
             borderRadius: .circular(12),
           ),
           elevation: 0,
         ),
-        child: _buildChild(AppColors.background),
+        child: _buildChild(context, context.colors.background),
       ),
     );
   }
 
-  Widget _buildChild(Color fgColor) {
+  Widget _buildChild(BuildContext context, Color fgColor) {
     if (isLoading) {
       return SizedBox(
         width: 18,
@@ -79,12 +80,12 @@ class CustomButton extends StatelessWidget {
         mainAxisSize: .min,
         children: [
           Icon(icon, size: 18, color: fgColor),
-          const SizedBox(width: 8),
-          Text(label, style: AppTextStyles.labelLarge.copyWith(color: fgColor)),
+          SizedBox(width: 8),
+          Text(label, style: context.textStyles.labelLarge.copyWith(color: fgColor)),
         ],
       );
     }
 
-    return Text(label, style: AppTextStyles.labelLarge.copyWith(color: fgColor));
+    return Text(label, style: context.textStyles.labelLarge.copyWith(color: fgColor));
   }
 }

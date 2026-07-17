@@ -13,14 +13,14 @@ class BlocklistCubit extends Cubit<BlocklistState> {
   }) : _getBlocklist = getBlocklist,
        _addDomain = addDomain,
        _removeDomain = removeDomain,
-       super(const BlocklistInitial());
+       super(BlocklistInitial());
 
   final GetBlocklistUsecase _getBlocklist;
   final AddDomainUsecase _addDomain;
   final RemoveDomainUsecase _removeDomain;
 
   Future<void> loadBlocklist() async {
-    emit(const BlocklistLoading());
+    emit(BlocklistLoading());
     try {
       final domains = await _getBlocklist();
       emit(BlocklistLoaded(domains: domains));

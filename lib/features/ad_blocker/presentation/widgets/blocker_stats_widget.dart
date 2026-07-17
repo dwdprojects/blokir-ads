@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/utils/app_utils.dart';
 import '../../../../core/widgets/app_card.dart';
+import 'package:blokir_ads/core/theme/theme_extensions.dart';
+
+import '../../../../core/localization/app_strings.dart';
 
 class BlockerStatsWidget extends StatelessWidget {
   const BlockerStatsWidget({
@@ -18,32 +19,34 @@ class BlockerStatsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = AppStrings.of(context);
+    
     return Row(
       children: [
         Expanded(
           child: _StatCard(
-            label: 'Iklan Diblokir',
+            label: strings.adsBlocked,
             value: AppUtils.formatNumber(blockedCount),
             icon: Icons.block_rounded,
-            iconColor: AppColors.inactive,
+            iconColor: context.colors.inactive,
           ),
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: 12),
         Expanded(
           child: _StatCard(
-            label: 'Waktu Aktif',
+            label: strings.uptime,
             value: AppUtils.formatDuration(uptime),
             icon: Icons.timer_outlined,
-            iconColor: AppColors.primary,
+            iconColor: context.colors.primary,
           ),
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: 12),
         Expanded(
           child: _StatCard(
-            label: 'App Target',
+            label: strings.targetApps,
             value: targetCount.toString(),
             icon: Icons.apps_rounded,
-            iconColor: AppColors.warning,
+            iconColor: context.colors.warning,
           ),
         ),
       ],
@@ -67,16 +70,16 @@ class _StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppCard(
-      padding: const EdgeInsets.all(14),
+      padding: EdgeInsets.all(14),
       child: Column(
         children: [
           Icon(icon, color: iconColor, size: 22),
-          const SizedBox(height: 8),
-          Text(value, style: AppTextStyles.titleMedium),
-          const SizedBox(height: 4),
+          SizedBox(height: 8),
+          Text(value, style: context.textStyles.titleMedium),
+          SizedBox(height: 4),
           Text(
             label,
-            style: AppTextStyles.caption,
+            style: context.textStyles.caption,
             textAlign: .center,
             maxLines: 2,
           ),

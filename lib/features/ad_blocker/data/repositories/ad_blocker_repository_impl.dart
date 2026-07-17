@@ -15,6 +15,9 @@ class AdBlockerRepositoryImpl implements AdBlockerRepository {
 
   @override
   Stream<String> get logStream => _datasource.logStream;
+  
+  @override
+  Stream<bool> get statusStream => _datasource.statusStream;
 
   @override
   Future<bool> startBlocker({required List<String> targetPackages}) =>

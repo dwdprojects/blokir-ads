@@ -1,7 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
-import '../theme/app_colors.dart';
+import 'package:blokir_ads/core/theme/theme_extensions.dart';
 
 class AppCard extends StatelessWidget {
   const AppCard({
@@ -30,9 +30,9 @@ class AppCard extends StatelessWidget {
     return Container(
       margin: margin,
       decoration: BoxDecoration(
-        gradient: gradient ?? AppColors.cardGradient,
+        gradient: gradient ?? context.colors.cardGradient,
         borderRadius: BorderRadius.circular(radius),
-        border: Border.all(color: borderColor ?? AppColors.border, width: 1),
+        border: Border.all(color: borderColor ?? context.colors.border, width: 1),
       ),
       child: Material(
         color: Colors.transparent,
@@ -40,10 +40,10 @@ class AppCard extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(radius),
-          splashColor: AppColors.primary.withOpacity(0.06),
-          highlightColor: AppColors.primary.withOpacity(0.03),
+          splashColor: context.colors.primary.withOpacity(0.06),
+          highlightColor: context.colors.primary.withOpacity(0.03),
           child: Padding(
-            padding: padding ?? const EdgeInsets.all(16),
+            padding: padding ?? EdgeInsets.all(16),
             child: child,
           ),
         ),

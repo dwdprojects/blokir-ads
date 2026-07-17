@@ -6,5 +6,6 @@ abstract class AdBlockerRepository {
   Future<BlockerStatusEntity> getStatus();
   Future<bool> requestPermission();
   Stream<String> get logStream;
+  Stream<bool> get statusStream;
   Future<bool> addCustomDomain(String domain);
 }

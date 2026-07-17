@@ -4,14 +4,20 @@ import '../constants/app_constants.dart';
 class VpnUtils {
   VpnUtils._();
 
-  static const MethodChannel _channel =
+  static final MethodChannel _channel =
       MethodChannel(AppConstants.vpnChannelName);
   
-  static const EventChannel _logChannel =
+  static final EventChannel _logChannel =
       EventChannel(AppConstants.logsChannelName);
+      
+  static final EventChannel _statusChannel =
+      EventChannel(AppConstants.statusChannelName);
 
   static Stream<String> get logStream =>
       _logChannel.receiveBroadcastStream().cast<String>();
+      
+  static Stream<bool> get statusStream =>
+      _statusChannel.receiveBroadcastStream().cast<bool>();
 
   static Future<bool> requestVpnPermission() async {
     try {

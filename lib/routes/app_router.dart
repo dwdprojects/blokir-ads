@@ -5,22 +5,27 @@ import '../features/ad_blocker/presentation/pages/ad_blocker_home_page.dart';
 import '../features/app_selector/presentation/pages/app_selector_page.dart';
 import '../features/blocklist/presentation/pages/blocklist_page.dart';
 
+import '../features/settings/presentation/pages/settings_page.dart';
+
 class AppRouter {
   AppRouter._();
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case AdBlockerHomePage.routeName:
-        return _fade(const AdBlockerHomePage());
+        return _fade(AdBlockerHomePage());
 
       case AppSelectorPage.routeName:
-        return _slide(const AppSelectorPage());
+        return _slide(AppSelectorPage());
 
       case BlocklistPage.routeName:
-        return _slide(const BlocklistPage());
+        return _slide(BlocklistPage());
+        
+      case SettingsPage.routeName:
+        return _slide(SettingsPage());
 
       default:
-        return _fade(const AdBlockerHomePage());
+        return _fade(AdBlockerHomePage());
     }
   }
 
@@ -31,7 +36,7 @@ class AppRouter {
       transitionsBuilder: (context, animation, _, child) {
         return FadeTransition(opacity: animation, child: child);
       },
-      transitionDuration: const Duration(milliseconds: 250),
+      transitionDuration: Duration(milliseconds: 250),
     );
   }
 
@@ -40,12 +45,12 @@ class AppRouter {
       pageBuilder: (context, _, __) => page,
       transitionsBuilder: (context, animation, _, child) {
         final offset = Tween<Offset>(
-          begin: const Offset(1, 0),
+          begin: Offset(1, 0),
           end: Offset.zero,
         ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOut));
         return SlideTransition(position: offset, child: child);
       },
-      transitionDuration: const Duration(milliseconds: 300),
+      transitionDuration: Duration(milliseconds: 300),
     );
   }
 }
