@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../../ad_blocker/presentation/widgets/support_bottom_sheet.dart';
 import 'views/language_bottom_sheet_view.dart';
 import 'views/theme_bottom_sheet_view.dart';
 
@@ -22,6 +21,14 @@ class SettingsPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: context.colors.background,
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: context.colors.textPrimary,
+            size: 20,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
         title: Builder(
           builder: (context) {
             final strings = AppStrings.of(context);
@@ -109,12 +116,7 @@ class SettingsPage extends StatelessWidget {
                 icon: Icons.people_rounded,
                 title: strings.aboutUs,
                 onTap: () {
-                  showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    backgroundColor: Colors.transparent,
-                    builder: (context) => SupportBottomSheet(),
-                  );
+                  Navigator.pushNamed(context, '/about-us');
                 },
               ),
               _buildDivider(context),
@@ -123,9 +125,7 @@ class SettingsPage extends StatelessWidget {
                 icon: Icons.verified_user_rounded,
                 title: strings.privacyPolicy,
                 onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('${strings.privacyPolicy} - ${strings.comingSoon}')),
-                  );
+                  Navigator.pushNamed(context, '/legal');
                 },
               ),
               _buildDivider(context),
@@ -134,8 +134,10 @@ class SettingsPage extends StatelessWidget {
                 icon: Icons.description_rounded,
                 title: strings.termsAndConditions,
                 onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('${strings.termsAndConditions} - ${strings.comingSoon}')),
+                  Navigator.pushNamed(
+                    context,
+                    '/legal',
+                    arguments: {'initialTabIndex': 1},
                   );
                 },
               ),
@@ -144,16 +146,77 @@ class SettingsPage extends StatelessWidget {
                 context,
                 icon: Icons.info_outline_rounded,
                 title: strings.appVersion,
-                subtitle: '1.0.0',
-                onTap: () {},
+                onTap: () {
+                  _showVersionDialog(context, strings);
+                },
                 showChevron: false,
               ),
             ],
           ),
         ],
       );
+        },
+      ),
+    );
+  }
+
+  void _showVersionDialog(BuildContext context, AppStrings strings) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: context.colors.surface,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: context.colors.primary.withValues(alpha: 0.2),
+                        blurRadius: 20,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(24),
+                    child: Image.asset(
+                      'assets/icon/icon.png',
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Icon(
+                        Icons.shield_rounded,
+                        size: 50,
+                        color: context.colors.primary,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  strings.appName,
+                  style: context.textStyles.titleLarge.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Versi v1.0.0#1',
+                  style: context.textStyles.bodyMedium.copyWith(
+                    color: context.colors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
       },
-    ),
     );
   }
 

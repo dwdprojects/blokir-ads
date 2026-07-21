@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:blokir_ads/core/theme/theme_extensions.dart';
+import '../../../../core/localization/app_strings.dart';
 
 class SupportBottomSheet extends StatelessWidget {
   const SupportBottomSheet({super.key});
@@ -38,7 +39,7 @@ class SupportBottomSheet extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: context.colors.active.withOpacity(0.1),
+                color: context.colors.active.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -48,30 +49,30 @@ class SupportBottomSheet extends StatelessWidget {
               ),
             ),
             SizedBox(height: 16),
-            Text('Dukung Pengembangan', style: context.textStyles.titleLarge),
+            Text(AppStrings.of(context).supportDevelopmentTitle, style: context.textStyles.titleLarge),
             SizedBox(height: 8),
             Text(
-              'Aplikasi ini 100% gratis dan open-source. Jika aplikasi ini membantu Anda, pertimbangkan untuk memberikan dukungan agar pengembangan terus berjalan.',
+              AppStrings.of(context).supportDevelopmentDesc,
               textAlign: TextAlign.center,
               style: context.textStyles.bodyMedium,
             ),
             SizedBox(height: 32),
             _SupportButton(
-              title: 'Dukung via PayPal',
+              title: AppStrings.of(context).supportVia('PayPal'),
               icon: Icons.paypal_rounded,
               color: Color(0xFF00457C),
               onTap: () => _launchUrl('https://paypal.me/fachrealheart'),
             ),
             SizedBox(height: 12),
             _SupportButton(
-              title: 'Dukung via Saweria',
+              title: AppStrings.of(context).supportVia('Saweria'),
               icon: Icons.coffee_rounded,
               color: Color(0xFFFA8231),
               onTap: () => _launchUrl('https://saweria.co/dreamwithdiki'),
             ),
             SizedBox(height: 12),
             _SupportButton(
-              title: 'Dukung via Trakteer',
+              title: AppStrings.of(context).supportVia('Trakteer'),
               icon: Icons.local_cafe_rounded,
               color: Color(0xFFBE1E2D),
               onTap: () => _launchUrl('https://trakteer.id/dreamwithdiki/link'),
@@ -107,9 +108,9 @@ class _SupportButton extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: color.withOpacity(0.3)),
+            border: Border.all(color: color.withValues(alpha: 0.3)),
           ),
           child: Row(
             children: [

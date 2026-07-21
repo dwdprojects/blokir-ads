@@ -95,12 +95,21 @@ class _BlockerToggleWidgetState extends State<BlockerToggleWidget>
               : Column(
                   mainAxisAlignment: .center,
                   children: [
-                    Icon(
-                      widget.isActive
-                          ? Icons.shield_rounded
-                          : Icons.shield_outlined,
-                      size: 64,
-                      color: Colors.white,
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Image.asset(
+                        'assets/icon/icon.png',
+                        width: 64,
+                        height: 64,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Icon(
+                          widget.isActive
+                              ? Icons.shield_rounded
+                              : Icons.shield_outlined,
+                          size: 64,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                     SizedBox(height: 8),
                     Text(

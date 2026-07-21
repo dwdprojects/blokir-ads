@@ -44,6 +44,14 @@ class _AppSelectorPageState extends State<AppSelectorPage> {
       child: Scaffold(
         backgroundColor: context.colors.background,
         appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back_ios_new_rounded,
+              color: context.colors.textPrimary,
+              size: 20,
+            ),
+            onPressed: () => Navigator.pop(context),
+          ),
           title: Text(strings.selectApp, style: context.textStyles.titleLarge),
           actions: [
             BlocBuilder<AppSelectorCubit, AppSelectorState>(

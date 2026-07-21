@@ -6,7 +6,8 @@ import '../features/app_selector/presentation/pages/app_selector_page.dart';
 import '../features/blocklist/presentation/pages/blocklist_page.dart';
 
 import '../features/settings/presentation/pages/settings_page.dart';
-
+import '../features/settings/presentation/pages/about_us_page.dart';
+import '../features/settings/presentation/pages/legal_page.dart';
 class AppRouter {
   AppRouter._();
 
@@ -23,6 +24,14 @@ class AppRouter {
         
       case SettingsPage.routeName:
         return _slide(SettingsPage());
+        
+      case AboutUsPage.routeName:
+        return _slide(const AboutUsPage());
+        
+      case LegalPage.routeName:
+        final args = settings.arguments as Map<String, dynamic>?;
+        final initialIndex = args?['initialTabIndex'] as int? ?? 0;
+        return _slide(LegalPage(initialTabIndex: initialIndex));
 
       default:
         return _fade(AdBlockerHomePage());

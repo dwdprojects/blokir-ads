@@ -54,16 +54,25 @@ class _AdBlockerHomePageState extends State<AdBlockerHomePage> {
         titlePadding: EdgeInsets.fromLTRB(20, 0, 20, 16),
         title: Row(
           children: [
-            Container(
-              padding: EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                gradient: context.colors.primaryGradient,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(
-                Icons.shield_rounded,
-                color: Colors.white,
-                size: 18,
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.asset(
+                'assets/icon/icon.png',
+                width: 30,
+                height: 30,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => Container(
+                  padding: EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    gradient: context.colors.primaryGradient,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.shield_rounded,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                ),
               ),
             ),
             SizedBox(width: 10),
