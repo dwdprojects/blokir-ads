@@ -9,6 +9,7 @@ import '../cubit/settings_cubit.dart';
 import '../cubit/settings_state.dart';
 
 import '../../../../core/localization/app_strings.dart';
+import '../../../../core/constants/app_constants.dart';
 import 'package:blokir_ads/core/theme/theme_extensions.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -207,7 +208,7 @@ class SettingsPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Versi v1.0.0#1',
+                  'Versi ${AppConstants.appVersion}',
                   style: context.textStyles.bodyMedium.copyWith(
                     color: context.colors.textSecondary,
                   ),

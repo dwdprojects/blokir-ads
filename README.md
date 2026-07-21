@@ -26,6 +26,14 @@
 
 **Blokir Ads** adalah aplikasi Android open-source premium yang dibangun menggunakan Flutter untuk memblokir iklan digital di aplikasi lain melalui VPN lokal di dalam perangkat. Aplikasi ini beroperasi tanpa memerlukan akses root dan memungkinkan pengguna untuk memilih secara spesifik aplikasi mana saja yang ingin diblokir iklannya.
 
+<p align="center">
+  <img src="assets/ss/1.png" width="19%">
+  <img src="assets/ss/2.png" width="19%">
+  <img src="assets/ss/3.png" width="19%">
+  <img src="assets/ss/4.png" width="19%">
+  <img src="assets/ss/5.png" width="19%">
+</p>
+
 ---
 
 ## ✨ Fitur Utama
