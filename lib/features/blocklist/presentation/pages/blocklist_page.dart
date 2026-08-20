@@ -254,19 +254,18 @@ class _BlocklistContent extends StatelessWidget {
                           d.category,
                           style: context.textStyles.caption,
                         ),
-                        leading: Container(
-                          width: 8,
-                          height: 8,
-                          margin: EdgeInsets.only(left: 4),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: d.isEnabled
-                                ? context.colors.active
-                                : context.colors.textHint,
-                          ),
-                        ),
-                        trailing: d.isCustom
-                            ? IconButton(
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Switch(
+                              value: d.isEnabled,
+                              activeColor: context.colors.active,
+                              onChanged: (val) => context
+                                  .read<BlocklistCubit>()
+                                  .toggleDomainStatus(d.domain, val),
+                            ),
+                            if (d.isCustom)
+                              IconButton(
                                 icon: Icon(
                                   Icons.delete_outline,
                                   color: context.colors.inactive,
@@ -275,8 +274,9 @@ class _BlocklistContent extends StatelessWidget {
                                 onPressed: () => context
                                     .read<BlocklistCubit>()
                                     .removeDomain(d.domain),
-                              )
-                            : null,
+                              ),
+                          ],
+                        ),
                       ),
                     );
                   },
