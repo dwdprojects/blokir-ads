@@ -100,11 +100,15 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton(
     () => RemoveDomainUsecase(sl<BlocklistRepository>()),
   );
+  sl.registerLazySingleton(
+    () => ToggleDomainUsecase(sl<BlocklistRepository>()),
+  );
   sl.registerFactory(
     () => BlocklistCubit(
       getBlocklist: sl<GetBlocklistUsecase>(),
       addDomain: sl<AddDomainUsecase>(),
       removeDomain: sl<RemoveDomainUsecase>(),
+      toggleDomain: sl<ToggleDomainUsecase>(),
     ),
   );
 

@@ -22,3 +22,11 @@ class RemoveDomainUsecase {
 
   Future<void> call(String domain) => _repository.removeDomain(domain);
 }
+
+class ToggleDomainUsecase {
+  ToggleDomainUsecase(this._repository);
+  final BlocklistRepository _repository;
+
+  Future<void> call(String domain, {required bool isEnabled}) =>
+      _repository.toggleDomain(domain, isEnabled);
+}
