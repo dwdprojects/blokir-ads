@@ -22,6 +22,9 @@ class AppConstants {
   static String methodGetStatus = 'getStatus';
   static String methodRequestPermission = 'requestPermission';
   static String methodAddCustomDomain = 'addCustomDomain';
+  static String methodRemoveCustomDomain = 'removeCustomDomain';
+  static String methodAddCustomWhitelist = 'addCustomWhitelist';
+  static String methodRemoveCustomWhitelist = 'removeCustomWhitelist';
 
   // Defaults
   static const int defaultBlockedCount = 0;
