@@ -2,7 +2,7 @@ class AppConstants {
   AppConstants._();
 
   static const String appName = 'Blokir Ads';
-  static const String appVersion = 'v1.1.0#2';
+  static const String appVersion = 'v1.1.1#3';
 
   // SharedPreferences keys
   static String keyBlockedApps = 'blocked_apps';
