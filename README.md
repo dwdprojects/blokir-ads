@@ -42,7 +42,6 @@
 - **🚫 Tanpa Root**: Menggunakan fitur bawaan Android `VpnService` untuk melakukan intersepsi di tingkat DNS. Tidak memerlukan perangkat yang di-root.
 - **⚡ Pemrosesan Lokal (Privasi Utama)**: Semua intersepsi DNS dan perutean lalu lintas terjadi secara lokal di perangkat Anda. Tidak ada data yang dikirim ke server VPN eksternal.
 - **🌐 Daftar Blokir Berlapis**: Menggabungkan daftar blokir statis bawaan, daftar blokir dinamis dari komunitas (100.000+ domain dari Steven Black & Hagezi), dan daftar blokir khusus yang dapat ditentukan pengguna.
-- **✅ Daftar Putih Cerdas (Allowlist)**: Melindungi domain penting — termasuk sistem hadiah, poin dalam aplikasi, streaming video CDN, Firebase, dan gerbang pembayaran (payment gateway) — agar tidak terblokir secara tidak sengaja.
 - **🎨 UI Gelap Premium**: Menampilkan tema gelap bergaya glassmorphism yang modern dan elegan (Deep Navy dan Electric Cyan) untuk pengalaman pengguna premium.
 
 ---
@@ -55,31 +54,12 @@ Berbeda dengan pemblokir iklan tradisional yang memodifikasi file hosts (membutu
 2. **Konfigurasi VPN**: Kode Kotlin native memulai `VpnService`. Secara krusial, ia menggunakan `builder.addAllowedApplication(packageName)`. Hal ini memberitahu OS Android untuk merutekan *hanya* lalu lintas dari aplikasi yang dipilih ke antarmuka VPN khusus kami.
 3. **Intersepsi DNS**: Aplikasi menjalankan thread pemrosesan paket yang mendengarkan lalu lintas UDP di port 53 (permintaan DNS).
 4. **Inspeksi Paket Cerdas** *(Diperbarui)*:
-   - Setiap permintaan DNS dari aplikasi target diintersepsi dan diperiksa melalui **sistem keputusan 4-lapis**:
-     1. **Pemeriksaan Daftar Putih (Prioritas 0)** — Jika domain berada di daftar yang dilindungi, permintaan **selalu diizinkan**, terlepas dari daftar blokir mana pun.
-     2. **Daftar Blokir Khusus (Prioritas 1)** — Domain yang diblokir oleh pengguna diperiksa berikutnya.
-     3. **Daftar Blokir Dinamis (Prioritas 2)** — 100.000+ domain iklan yang bersumber dari komunitas diperiksa.
-     4. **Daftar Blokir Statis (Prioritas 3)** — Domain jaringan iklan yang ditanam (hardcoded) sebagai perlindungan terakhir (berfungsi secara offline).
+   - Setiap permintaan DNS dari aplikasi target diintersepsi dan diperiksa melalui **sistem keputusan 3-lapis**:
+     1. **Daftar Blokir Khusus (Prioritas 0)** — Domain yang diblokir oleh pengguna diperiksa pertama kali.
+     2. **Daftar Blokir Dinamis (Prioritas 1)** — 100.000+ domain iklan yang bersumber dari komunitas diperiksa.
+     3. **Daftar Blokir Statis (Prioritas 2)** — Domain jaringan iklan yang ditanam (hardcoded) sebagai perlindungan terakhir (berfungsi secara offline).
    - **Jika diblokir**: Layanan mengembalikan respons DNS palsu yang mengarah ke `0.0.0.0` (null-route). Jaringan iklan gagal dimuat.
    - **Jika diizinkan**: Permintaan DNS diteruskan ke DNS publik Google (`8.8.8.8`), dan respons aslinya dikembalikan dengan lancar.
-
----
-
-## ✅ Sistem Daftar Putih (Baru di v1.0)
-
-Peningkatan krusial dari pemblokir iklan sederhana adalah sistem **Daftar Putih (Allowlist)**. Ini mencegah fungsionalitas aplikasi penting rusak karena pemblokiran yang terlalu agresif.
-
-Kategori berikut ini **selalu diizinkan** dan tidak akan pernah diblokir:
-
-| Kategori | Contoh | Alasan Dilindungi |
-|---|---|---|
-| **Sistem Hadiah & Poin** | AppsFlyer, Adjust, Branch, Kochava | Platform ini memverifikasi bahwa Anda benar-benar menonton konten dan memberikan hadiah/poin. Memblokirnya akan merusak sistem penghasilan. |
-| **CDN & Streaming Video** | Cloudflare, Akamai, AWS CloudFront, Fastly | Menyajikan video, gambar, dan konten audio dari aplikasi yang Anda gunakan. Memblokirnya akan merusak pemutaran (playback). |
-| **Layanan Inti Google** | Firebase, FCM, Play Services, googleapis.com | Penting untuk login, notifikasi push, pembaruan aplikasi, dan pelaporan kerusakan. |
-| **Gerbang Pembayaran** | Midtrans, Xendit, Stripe, GoPay, OVO, DANA | Memblokir layanan ini akan mencegah pembelian dalam aplikasi dan penarikan dana. |
-| **Keamanan & Sertifikat** | Let's Encrypt, DigiCert, GlobalSign | Memblokir titik akhir OCSP/CRL akan merusak validasi sertifikat SSL. |
-
-> **Contoh:** Aplikasi seperti **FreeReels** menggunakan `appsflyer.com` dan `adjust.com` untuk melacak apakah Anda telah menyelesaikan sesi menonton dan memberikan poin hadiah. Tanpa daftar putih, domain ini akan diblokir karena mereka juga muncul di daftar pemblokir iklan komunitas. Dengan daftar putih, poin Anda akan masuk dengan benar, sementara iklan spanduk/interstisial dari jaringan lain tetap diblokir.
 
 ---
 
@@ -103,6 +83,9 @@ Platform raksasa teknologi menyajikan iklan mereka dari **domain yang persis sam
 
 > **Saran Terbaik:** Untuk aplikasi seperti YouTube, pemblokir iklan DNS bukan alat yang tepat. Anda harus menggunakan aplikasi klien modifikasi (mis. YouTube ReVanced atau NewPipe) yang menghapus iklan pada tingkat kode/API daripada tingkat jaringan.
 
+### ⚠️ Keterbatasan Sistem Hadiah (Reward Points)
+Aplikasi ini dirancang murni untuk **memblokir iklan secara agresif**. Karena sebagian besar aplikasi penghasil uang/koin (yang mengharuskan Anda menonton video) mewajibkan video iklan tersebut benar-benar diunduh dari server mereka, memblokir iklannya akan membuat sistem hadiah tersebut gagal (biasanya akan muncul error "Tidak ada koneksi internet"). Oleh karena itu, **fitur poin/hadiah yang bergantung pada menonton iklan kemungkinan besar tidak akan berfungsi**. Gunakan Blokir Ads hanya jika Anda benar-benar merasa kesal dengan banyak iklan dan tidak keberatan kehilangan poin harian tersebut.
+
 ---
 
 ## 🏗️ Arsitektur & Teknologi
@@ -120,7 +103,6 @@ Proyek ini secara ketat mengikuti prinsip **Clean Architecture** untuk memisahka
 - **Bahasa**: Kotlin
 - **Mesin Inti**: `android.net.VpnService`
 - **Pengelola Daftar Blokir**: `DynamicBlocklistManager` — mengunduh otomatis dan menyimpan cache 100.000+ domain dari sumber komunitas (Steven Black, Hagezi, AdGuard Mobile, HostsVN). Cache diperbarui setiap 7 hari.
-- **Mesin Daftar Putih**: `BlokirVpnService.isWhitelisted()` — perlindungan domain yang melindungi sistem hadiah, CDN, dan gerbang pembayaran.
 - **Komunikasi**: Flutter `MethodChannel` (`com.dwd.blokirads/vpn` dan `com.dwd.blokirads/apps`)
 
 ---
@@ -131,7 +113,6 @@ Proyek ini secara ketat mengikuti prinsip **Clean Architecture** untuk memisahka
 - ✅ Pemblokiran iklan DNS berbasis VPN per aplikasi tanpa root
 - ✅ Daftar blokir statis bawaan untuk 30+ jaringan iklan besar (AdMob, Unity, AppLovin, dll.)
 - ✅ Daftar blokir dinamis yang diunduh otomatis dari sumber komunitas (100.000+ domain)
-- ✅ **Sistem Daftar Putih Cerdas** — melindungi API hadiah/poin, streaming CDN, Firebase, dan gerbang pembayaran dari pemblokiran tidak sengaja
 - ✅ Daftar blokir khusus yang ditentukan pengguna
 - ✅ UI gelap premium dengan terminal log DNS langsung (real-time)
 - ✅ Notifikasi latar depan (foreground) dengan penghitung pemblokiran langsung
