@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import '../theme/app_colors.dart';
 import 'package:blokir_ads/core/theme/theme_extensions.dart';
 
 class AppUtils {

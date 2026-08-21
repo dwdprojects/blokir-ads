@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
 import 'views/language_bottom_sheet_view.dart';
 import 'views/theme_bottom_sheet_view.dart';
 
@@ -42,13 +40,13 @@ class SettingsPage extends StatelessWidget {
       body: BlocBuilder<SettingsCubit, SettingsState>(
         builder: (context, state) {
           final strings = AppStrings.of(context);
-          final themeName = state.themeMode == AppThemeMode.light 
-              ? strings.light 
-              : state.themeMode == AppThemeMode.dark 
-                  ? strings.dark 
-                  : strings.system;
-          final langName = state.language == AppLanguage.en 
-              ? strings.english 
+          final themeName = state.themeMode == AppThemeMode.light
+              ? strings.light
+              : state.themeMode == AppThemeMode.dark
+              ? strings.dark
+              : strings.system;
+          final langName = state.language == AppLanguage.en
+              ? strings.english
               : strings.indonesian;
 
           return ListView(
@@ -88,74 +86,74 @@ class SettingsPage extends StatelessWidget {
                       );
                     },
                   ),
-              _buildDivider(context),
-              _buildSettingsTile(
-                context,
-                icon: Icons.apps_rounded,
-                title: strings.selectApp,
-                subtitle: strings.selectAppSubtitle,
-                onTap: () => Navigator.pushNamed(context, '/app-selector'),
-              ),
-              _buildDivider(context),
-              _buildSettingsTile(
-                context,
-                icon: Icons.list_alt_rounded,
-                title: strings.customBlocklist,
-                subtitle: strings.customBlocklistSubtitle,
-                onTap: () => Navigator.pushNamed(context, '/blocklist'),
-              ),
-            ],
-          ),
-          SizedBox(height: 32),
-          _buildSectionTitle(context, strings.supportAndLegal),
-          SizedBox(height: 12),
-          _buildCard(
-            context,
-            children: [
-              _buildSettingsTile(
-                context,
-                icon: Icons.people_rounded,
-                title: strings.aboutUs,
-                onTap: () {
-                  Navigator.pushNamed(context, '/about-us');
-                },
-              ),
-              _buildDivider(context),
-              _buildSettingsTile(
-                context,
-                icon: Icons.verified_user_rounded,
-                title: strings.privacyPolicy,
-                onTap: () {
-                  Navigator.pushNamed(context, '/legal');
-                },
-              ),
-              _buildDivider(context),
-              _buildSettingsTile(
-                context,
-                icon: Icons.description_rounded,
-                title: strings.termsAndConditions,
-                onTap: () {
-                  Navigator.pushNamed(
+                  _buildDivider(context),
+                  _buildSettingsTile(
                     context,
-                    '/legal',
-                    arguments: {'initialTabIndex': 1},
-                  );
-                },
+                    icon: Icons.apps_rounded,
+                    title: strings.selectApp,
+                    subtitle: strings.selectAppSubtitle,
+                    onTap: () => Navigator.pushNamed(context, '/app-selector'),
+                  ),
+                  _buildDivider(context),
+                  _buildSettingsTile(
+                    context,
+                    icon: Icons.list_alt_rounded,
+                    title: strings.customBlocklist,
+                    subtitle: strings.customBlocklistSubtitle,
+                    onTap: () => Navigator.pushNamed(context, '/blocklist'),
+                  ),
+                ],
               ),
-              _buildDivider(context),
-              _buildSettingsTile(
+              SizedBox(height: 32),
+              _buildSectionTitle(context, strings.supportAndLegal),
+              SizedBox(height: 12),
+              _buildCard(
                 context,
-                icon: Icons.info_outline_rounded,
-                title: strings.appVersion,
-                onTap: () {
-                  _showVersionDialog(context, strings);
-                },
-                showChevron: false,
+                children: [
+                  _buildSettingsTile(
+                    context,
+                    icon: Icons.people_rounded,
+                    title: strings.aboutUs,
+                    onTap: () {
+                      Navigator.pushNamed(context, '/about-us');
+                    },
+                  ),
+                  _buildDivider(context),
+                  _buildSettingsTile(
+                    context,
+                    icon: Icons.verified_user_rounded,
+                    title: strings.privacyPolicy,
+                    onTap: () {
+                      Navigator.pushNamed(context, '/legal');
+                    },
+                  ),
+                  _buildDivider(context),
+                  _buildSettingsTile(
+                    context,
+                    icon: Icons.description_rounded,
+                    title: strings.termsAndConditions,
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        '/legal',
+                        arguments: {'initialTabIndex': 1},
+                      );
+                    },
+                  ),
+                  _buildDivider(context),
+                  _buildSettingsTile(
+                    context,
+                    icon: Icons.info_outline_rounded,
+                    title: strings.appVersion,
+                    onTap: () {
+                      _showVersionDialog(context, strings);
+                    },
+                    showChevron: false,
+                  ),
+                ],
               ),
             ],
-          ),
-        ],
-      );
+          );
         },
       ),
     );
@@ -167,7 +165,9 @@ class SettingsPage extends StatelessWidget {
       builder: (context) {
         return Dialog(
           backgroundColor: context.colors.surface,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
             child: Column(
@@ -242,9 +242,7 @@ class SettingsPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: context.colors.border, width: 1),
       ),
-      child: Column(
-        children: children,
-      ),
+      child: Column(children: children),
     );
   }
 
