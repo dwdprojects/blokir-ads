@@ -10,17 +10,14 @@ class BlocklistCubit extends Cubit<BlocklistState> {
     required GetBlocklistUsecase getBlocklist,
     required AddDomainUsecase addDomain,
     required RemoveDomainUsecase removeDomain,
-    required ToggleDomainUsecase toggleDomain,
   }) : _getBlocklist = getBlocklist,
        _addDomain = addDomain,
        _removeDomain = removeDomain,
-       _toggleDomain = toggleDomain,
        super(BlocklistInitial());
 
   final GetBlocklistUsecase _getBlocklist;
   final AddDomainUsecase _addDomain;
   final RemoveDomainUsecase _removeDomain;
-  final ToggleDomainUsecase _toggleDomain;
 
   Future<void> loadBlocklist() async {
     emit(BlocklistLoading());
@@ -45,11 +42,6 @@ class BlocklistCubit extends Cubit<BlocklistState> {
 
   Future<void> removeDomain(String domain) async {
     await _removeDomain(domain);
-    await loadBlocklist();
-  }
-
-  Future<void> toggleDomainStatus(String domain, bool isEnabled) async {
-    await _toggleDomain(domain, isEnabled: isEnabled);
     await loadBlocklist();
   }
 

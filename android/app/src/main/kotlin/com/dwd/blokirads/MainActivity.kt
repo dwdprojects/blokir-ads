@@ -157,36 +157,6 @@ class MainActivity : FlutterActivity() {
                         }
                     }
 
-                    "removeCustomDomain" -> {
-                        val domain = call.argument<String>("domain")
-                        if (domain != null) {
-                            BlokirVpnService.removeCustomDomain(applicationContext, domain)
-                            result.success(true)
-                        } else {
-                            result.error("INVALID_ARG", "Domain is required", null)
-                        }
-                    }
-
-                    "addCustomWhitelist" -> {
-                        val domain = call.argument<String>("domain")
-                        if (domain != null) {
-                            BlokirVpnService.addCustomWhitelist(applicationContext, domain)
-                            result.success(true)
-                        } else {
-                            result.error("INVALID_ARG", "Domain is required", null)
-                        }
-                    }
-
-                    "removeCustomWhitelist" -> {
-                        val domain = call.argument<String>("domain")
-                        if (domain != null) {
-                            BlokirVpnService.removeCustomDomain(applicationContext, domain)
-                            result.success(true)
-                        } else {
-                            result.error("INVALID_ARG", "Domain is required", null)
-                        }
-                    }
-
                     else -> result.notImplemented()
                 }
             }

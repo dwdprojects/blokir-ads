@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../theme/app_colors.dart';
+import '../theme/app_text_styles.dart';
 import 'package:blokir_ads/core/theme/theme_extensions.dart';
 
 class CustomButton extends StatelessWidget {

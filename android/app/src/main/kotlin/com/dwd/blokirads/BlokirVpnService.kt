@@ -55,18 +55,6 @@ class BlokirVpnService : VpnService() {
             manager.addDomain(domain)
         }
 
-        fun removeCustomDomain(context: Context, domain: String) {
-            val manager = sharedCustomManager
-                ?: CustomBlocklistManager(context.applicationContext).also { sharedCustomManager = it }
-            manager.removeDomain(domain)
-        }
-
-        fun addCustomWhitelist(context: Context, domain: String) {
-            val manager = sharedCustomManager
-                ?: CustomBlocklistManager(context.applicationContext).also { sharedCustomManager = it }
-            manager.addWhitelist(domain)
-        }
-
         // ─────────────────────────────────────────────────────────────────────
         // WHITELIST — Domain yang TIDAK BOLEH diblokir sama sekali.
         // Melindungi sistem reward, poin, klaim hadiah, dan fungsi inti app.
@@ -82,14 +70,6 @@ class BlokirVpnService : VpnService() {
             "branch.io", "app.link", "bnc.lt",
             // Kochava & Singular — attribution reward install
             "kochava.com", "singular.net",
-            // AppLovin, Pangle, Unity, Vungle, Liftoff (Hanya API verifikasi/events, bukan CDN video)
-            "api16-access-wf-my.pangle.io", "api16-dual-event-sg2.pangle.io", "api16-access-ttp.tiktokpangle.us", "mediation-sg2-log.pangle.io",
-            "ms.applovin.com", "ms4.applovin.com", "rt.applovin.com", "sts.applovin.com", "d.applovin.com", "prod-mediate-events.applovin.com",
-            "ms.applvn.com", "d.applvn.com", "ms4.applvn.com",
-            "gateway.unityads.unity3d.com",
-            "events.ads.vungle.com", "logs.ads.vungle.com",
-            "click.liftoff.io", "adexp.liftoff.io", "impression-east.liftoff.io",
-            "googleads.g.doubleclick.net", // Eksperimen: biarkan API AdMob lewat, tapi biarkan CDN video terblokir
 
             // ── Firebase & Google Core (Login, Notifikasi, Analitik Aplikasi) ──
             "firebase.googleapis.com", "firebaseinstallations.googleapis.com",
@@ -429,13 +409,7 @@ class BlokirVpnService : VpnService() {
     private fun isDomainBlocked(domain: String): Boolean {
         val lower = domain.lowercase().trimEnd('.')
 
-        // 0. CUSTOM WHITELIST DIUTAMAKAN — User overrides
-        if (customBlocklistManager.isDomainWhitelisted(lower)) {
-            Log.v(TAG, "CUSTOM WHITELISTED (allowed): $lower")
-            return false
-        }
-
-        // 0.1 WHITELIST HARDCODED — Domain reward, poin, CDN, dan fungsi inti
+        // 0. WHITELIST DIUTAMAKAN — Domain reward, poin, CDN, dan fungsi inti
         //    tidak boleh diblokir apapun yang terjadi.
         if (isWhitelisted(lower)) {
             Log.v(TAG, "WHITELISTED (allowed): $lower")

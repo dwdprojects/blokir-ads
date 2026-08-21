@@ -73,40 +73,4 @@ class VpnUtils {
       return false;
     }
   }
-
-  static Future<bool> removeCustomDomain(String domain) async {
-    try {
-      final result = await _channel.invokeMethod<bool>(
-        AppConstants.methodRemoveCustomDomain,
-        {'domain': domain},
-      );
-      return result ?? false;
-    } on PlatformException {
-      return false;
-    }
-  }
-
-  static Future<bool> addCustomWhitelist(String domain) async {
-    try {
-      final result = await _channel.invokeMethod<bool>(
-        AppConstants.methodAddCustomWhitelist,
-        {'domain': domain},
-      );
-      return result ?? false;
-    } on PlatformException {
-      return false;
-    }
-  }
-
-  static Future<bool> removeCustomWhitelist(String domain) async {
-    try {
-      final result = await _channel.invokeMethod<bool>(
-        AppConstants.methodRemoveCustomWhitelist,
-        {'domain': domain},
-      );
-      return result ?? false;
-    } on PlatformException {
-      return false;
-    }
-  }
 }
