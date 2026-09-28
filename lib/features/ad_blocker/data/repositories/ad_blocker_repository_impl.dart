@@ -20,8 +20,14 @@ class AdBlockerRepositoryImpl implements AdBlockerRepository {
   Stream<bool> get statusStream => _datasource.statusStream;
 
   @override
-  Future<bool> startBlocker({required List<String> targetPackages}) =>
-      _datasource.startVpn(targetPackages: targetPackages);
+  Future<bool> startBlocker({
+    required List<String> targetPackages,
+    bool isGlobalMode = true,
+  }) =>
+      _datasource.startVpn(
+        targetPackages: targetPackages,
+        isGlobalMode: isGlobalMode,
+      );
 
   @override
   Future<bool> stopBlocker() => _datasource.stopVpn();

@@ -1,13 +1,18 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
+
 import 'views/language_bottom_sheet_view.dart';
 import 'views/theme_bottom_sheet_view.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../cubit/settings_cubit.dart';
 import '../cubit/settings_state.dart';
 
 import '../../../../core/localization/app_strings.dart';
 import '../../../../core/constants/app_constants.dart';
+
 import 'package:blokir_ads/core/theme/theme_extensions.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -53,10 +58,21 @@ class SettingsPage extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
             children: [
               _buildSectionTitle(context, strings.appPreferences),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               _buildCard(
                 context,
                 children: [
+                  _buildSwitchTile(
+                    context,
+                    icon: Icons.security_rounded,
+                    title: strings.globalProtectionMode,
+                    subtitle: strings.globalProtectionSubtitle,
+                    value: state.isGlobalProtection,
+                    onChanged: (val) {
+                      context.read<SettingsCubit>().toggleGlobalProtection(val);
+                    },
+                  ),
+                  _buildDivider(context),
                   _buildSettingsTile(
                     context,
                     icon: Icons.dark_mode_rounded,
@@ -67,7 +83,7 @@ class SettingsPage extends StatelessWidget {
                         context: context,
                         isScrollControlled: true,
                         backgroundColor: Colors.transparent,
-                        builder: (context) => ThemeBottomSheetView(),
+                        builder: (context) => const ThemeBottomSheetView(),
                       );
                     },
                   ),
@@ -304,6 +320,54 @@ class SettingsPage extends StatelessWidget {
               ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildSwitchTile(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    String? subtitle,
+    required bool value,
+    required ValueChanged<bool> onChanged,
+  }) {
+    return Padding(
+      padding: const .symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          Container(
+            padding: const .all(10),
+            decoration: BoxDecoration(
+              color: context.colors.backgroundSecondary,
+              borderRadius: .circular(12),
+            ),
+            child: Icon(icon, color: context.colors.primary, size: 22),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: .start,
+              children: [
+                Text(title, style: context.textStyles.bodyLarge),
+                if (subtitle != null) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: context.textStyles.bodySmall.copyWith(
+                      color: context.colors.textSecondary,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          Switch.adaptive(
+            value: value,
+            activeColor: context.colors.primary,
+            onChanged: onChanged,
+          ),
+        ],
       ),
     );
   }

@@ -1,7 +1,10 @@
 import '../entities/blocker_status_entity.dart';
 
 abstract class AdBlockerRepository {
-  Future<bool> startBlocker({required List<String> targetPackages});
+  Future<bool> startBlocker({
+    required List<String> targetPackages,
+    bool isGlobalMode = true,
+  });
   Future<bool> stopBlocker();
   Future<BlockerStatusEntity> getStatus();
   Future<bool> requestPermission();

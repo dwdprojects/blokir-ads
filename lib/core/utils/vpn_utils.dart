@@ -29,11 +29,17 @@ class VpnUtils {
     }
   }
 
-  static Future<bool> startVpn({required List<String> targetPackages}) async {
+  static Future<bool> startVpn({
+    required List<String> targetPackages,
+    bool isGlobalMode = true,
+  }) async {
     try {
       final result = await _channel.invokeMethod<bool>(
         AppConstants.methodStartVpn,
-        {'targetPackages': targetPackages},
+        {
+          'targetPackages': targetPackages,
+          'isGlobalMode': isGlobalMode,
+        },
       );
       return result ?? false;
     } on PlatformException {

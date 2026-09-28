@@ -2,7 +2,10 @@ import '../../../../core/utils/vpn_utils.dart';
 import '../../domain/entities/blocker_status_entity.dart';
 
 abstract class VpnServiceDatasource {
-  Future<bool> startVpn({required List<String> targetPackages});
+  Future<bool> startVpn({
+    required List<String> targetPackages,
+    bool isGlobalMode = true,
+  });
   Future<bool> stopVpn();
   Future<BlockerStatusEntity> getStatus();
   Future<bool> requestPermission();
@@ -18,8 +21,14 @@ class VpnServiceDatasourceImpl implements VpnServiceDatasource {
   Future<bool> requestPermission() => VpnUtils.requestVpnPermission();
 
   @override
-  Future<bool> startVpn({required List<String> targetPackages}) =>
-      VpnUtils.startVpn(targetPackages: targetPackages);
+  Future<bool> startVpn({
+    required List<String> targetPackages,
+    bool isGlobalMode = true,
+  }) =>
+      VpnUtils.startVpn(
+        targetPackages: targetPackages,
+        isGlobalMode: isGlobalMode,
+      );
 
   @override
   Future<bool> stopVpn() => VpnUtils.stopVpn();
