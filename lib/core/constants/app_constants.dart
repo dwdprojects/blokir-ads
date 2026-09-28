@@ -2,7 +2,7 @@ class AppConstants {
   AppConstants._();
 
   static const String appName = 'Blokir Ads';
-  static const String appVersion = 'v1.1.1#3';
+  static const String appVersion = 'v1.2.0#4';
 
   // SharedPreferences keys
   static String keyBlockedApps = 'blocked_apps';
@@ -10,6 +10,7 @@ class AppConstants {
   static String keyCustomBlocklist = 'custom_blocklist';
   static String keyAdsBlockedCount = 'ads_blocked_count';
   static String keyTotalUptime = 'total_uptime_seconds';
+  static String keyGlobalProtectionMode = 'global_protection_mode';
 
   // VPN Method Channel
   static String vpnChannelName = 'com.blokirads/vpn';

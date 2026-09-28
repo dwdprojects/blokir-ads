@@ -1,9 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:blokir_ads/app.dart';
 import 'package:blokir_ads/di/injection_container.dart';
 
 void main() {
   setUpAll(() async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    SharedPreferences.setMockInitialValues({});
     await initDependencies();
   });
 
