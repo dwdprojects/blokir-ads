@@ -29,6 +29,8 @@ class BlokirVpnService : VpnService() {
         const val ACTION_STOP = "ACTION_STOP_VPN"
         const val EXTRA_TARGET_PACKAGES = "target_packages"
 
+        const val EXTRA_IS_GLOBAL = "is_global"
+
         // Shared state — diakses dari MainActivity
         val isRunning = AtomicBoolean(false)
         val blockedCount = AtomicInteger(0)
@@ -57,54 +59,34 @@ class BlokirVpnService : VpnService() {
 
         // ─────────────────────────────────────────────────────────────────────
         // WHITELIST — Domain yang TIDAK BOLEH diblokir sama sekali.
-        // Melindungi sistem reward, poin, klaim hadiah, dan fungsi inti app.
-        // Diutamakan di atas semua blocklist (static, dynamic, custom).
+        // HANYA untuk fungsi inti aplikasi, Play Store resmi, pembayaran, dan CDN umum.
+        // PERHATIAN: JANGAN masukkan domain attribution/tracker (AppsFlyer, Adjust,
+        // Branch, dll.) ke sini karena akan meloloskan auto-redirect install game!
         // ─────────────────────────────────────────────────────────────────────
         val whitelistedDomains: Set<String> = setOf(
-            // ── Sistem Reward & Klaim Poin (Reward Apps) ──
-            // AppsFlyer — platform attribution untuk reward & poin (bukan hanya iklan)
-            "appsflyer.com", "onelink.me",
-            // Adjust — dipakai reward apps untuk verifikasi tonton konten & poin
-            "adjust.com", "adj.st", "adjustapi.com", "adjust.net.in",
-            // Branch — deep-link untuk klaim reward & referral
-            "branch.io", "app.link", "bnc.lt",
-            // Kochava & Singular — attribution reward install
-            "kochava.com", "singular.net",
-
-            // ── Firebase & Google Core (Login, Notifikasi, Analitik Aplikasi) ──
+            // ── Firebase & Google Core (Login, Notifikasi, Play Store Resmi) ──
             "firebase.googleapis.com", "firebaseinstallations.googleapis.com",
             "firebaseio.com", "fcm.googleapis.com", "fcm-xmpp.googleapis.com",
             "play.googleapis.com", "googleapis.com",
             "accounts.google.com", "www.googleapis.com",
             "crashlytics.com", "firebaselogging.googleapis.com",
-
-            // ── App Store & Update ──
-            "dl.google.com", "android.clients.google.com",
+            "play.google.com", "android.clients.google.com", "dl.google.com",
             "connectivitycheck.gstatic.com", "gstatic.com",
 
-            // ── CDN & Streaming Konten (Video, Gambar, Audio) ──
-            // Cloudflare
+            // ── CDN & Cloud Content ──
             "cloudflare.com", "cloudflare-dns.com", "cdn.cloudflare.com",
-            // Akamai — CDN video streaming populer
             "akamaihd.net", "akamaized.net", "akamaistream.net", "edgekey.net",
-            // Fastly CDN
             "fastly.net", "fastlylb.net",
-            // AWS (banyak apps pakai S3/CloudFront untuk host konten)
             "amazonaws.com", "cloudfront.net",
-            // Azure
             "azureedge.net", "azure.com",
 
-            // ── Platform Streaming & Konten Legal ──
-            // YouTube (konten + reward watch-time)
+            // ── Platform Sosial & Konten (Streaming) ──
             "youtube.com", "youtu.be", "ytimg.com", "googlevideo.com", "yt3.ggpht.com",
-            // TikTok (konten)
             "tiktok.com", "tiktokcdn.com", "musical.ly",
-            // Instagram & Facebook konten
             "instagram.com", "cdninstagram.com", "facebook.com", "fbcdn.net",
-            // Twitter/X
             "twitter.com", "x.com", "twimg.com",
 
-            // ── Payment & Monetisasi Resmi ──
+            // ── Payment Resmi (Jangan Ganggu Transaksi) ──
             "paypal.com", "stripe.com", "braintreegateway.com",
             "xendit.co", "midtrans.com", "doku.com", "ovo.id",
             "gopay.co.id", "dana.id", "shopeepay.co.id",
@@ -113,73 +95,90 @@ class BlokirVpnService : VpnService() {
             "letsencrypt.org", "ocsp.digicert.com", "ocsp.comodoca.com",
             "crl.globalsign.com", "ocsp.globalsign.com",
 
-            // ── DNS Standar (Jangan Diblokir) ──
+            // ── DNS Standar ──
             "dns.google", "cloudflare-dns.com", "dns.quad9.net"
         )
 
         // Daftar domain iklan yang diblokir (DNS null-routing ke 0.0.0.0)
         val blockedDomains = setOf(
-            // Google AdMob & Play Install Ads
+            // ── 1. App Install Ads, Click Redirects, & Attribution Trackers ──
+            // Domain pengarah install liar & pelacak klik otomatis di game
+            "appsflyer.com", "onelink.me", "app.appsflyer.com", "hq1.appsflyer.com",
+            "adjust.com", "adj.st", "adjustapi.com", "adjust.net.in", "app.adjust.com", "view.adjust.com",
+            "branch.io", "app.link", "bnc.lt", "branch.link",
+            "kochava.com", "control.kochava.com", "smart.link",
+            "singular.net", "s.singular.net", "c.singular.net", "singular.io",
+            "tenjin.io", "tenjin.com", "track.tenjin.io",
+            "airbridge.io", "abr.ge",
+
+            // ── 2. Unity Ads Engine & Ecosystem ──
+            "unityads.unity3d.com", "auction.unityads.unity3d.com",
+            "config.unityads.unity3d.com", "publisher-event.unityads.unity3d.com",
+            "webview.unityads.unity3d.com", "unityads.cache.unity3d.com",
+            "adserver.unityads.unity3d.com", "analytics.unity3d.com",
+            "cdns.unityads.unity3d.com", "mediation.unityads.unity3d.com",
+            "applifier.com", "gameads-admin.applifier.com",
+            "unityads.com", "ads.unity3d.com",
+
+            // ── 3. ironSource / LevelPlay (Unity LevelPlay Mediation) ──
+            "ironsrc.com", "supersonic.com", "ads.supersonic.com", "supersonicads.com",
+            "outcome-ssp.supersonicads.com", "level-play-cdn.com", "levelplay.com",
+            "unity-levelplay.com", "is.com", "ssacdn.com", "atom-data.io",
+            "track.ironsrc.com", "init.supersonicads.com",
+
+            // ── 4. AppLovin & AppLovin MAX ──
+            "applovin.com", "applvn.com", "a.applvn.com", "ms.applovin.com",
+            "d.applovin.com", "rtb.applovin.com", "stage.applovin.com",
+            "ads.applovin.com", "img.applovin.com", "pdn.applovin.com",
+            "array.applovin.com", "res.applovin.com",
+
+            // ── 5. Mintegral (Mindworks / MBridge) ──
+            "mintegral.com", "mbridge.com", "rayjump.com", "mktkts.com",
+            "mrdatadog.com", "cdn-adn.rayjump.com", "net.rayjump.com",
+
+            // ── 6. Pangle / ByteDance (TikTok Gaming Ad Network) ──
+            "pangle.io", "pangleglobal.com", "pangolin-sdk-toutiao.com",
+            "tobidad.com", "ad.toutiao.com", "ibyteimg.com", "byteoversea.com",
+
+            // ── 7. Vungle / Liftoff ──
+            "vungle.com", "ads.vungle.com", "cdn-lb.vungle.com", "liftoff.io",
+            "api.vungle.com", "events.liftoff.io",
+
+            // ── 8. InMobi, Chartboost, Bigo, AdColony, Fyber ──
+            "inmobi.com", "w.inmobi.com", "c.inmobi.com", "inmobicdn.net",
+            "chartboost.com", "live.chartboost.com", "a.chartboost.com",
+            "bigossp.com", "ads.bigo.sg",
+            "adcolony.com", "events.adcolony.com", "ads30.adcolony.com",
+            "digitalturbine.com", "fyber.com", "inner-active.mobi",
+            "tapjoy.com", "ltv.tapjoy.com", "startapp.com", "startapps.com",
+
+            // ── 9. Google AdMob & Mobile Ads SDK ──
             "admob.com", "googleadservices.com", "googlesyndication.com",
             "doubleclick.net", "googleads.g.doubleclick.net",
             "pagead2.googlesyndication.com", "ad.doubleclick.net",
             "adservice.google.com", "ads.google.com", "tpc.googlesyndication.com",
+            "pubads.g.doubleclick.net", "securepubads.g.doubleclick.net",
+            "afs.googlesyndication.com", "fundingchoicesmessages.google.com",
             "googleoptimize.com", "google-analytics.com", "analytics.google.com",
-            "fundingchoicesmessages.google.com", "adsense.googlesyndication.com",
-            // Meta / Facebook
+            "adsense.googlesyndication.com",
+
+            // ── 10. Meta / Facebook Audience Network ──
             "an.facebook.com", "connect.facebook.net", "fbsbx.com",
-            // Unity Ads
-            "unityads.unity3d.com", "auction.unityads.unity3d.com",
-            "config.unityads.unity3d.com", "publisher-event.unityads.unity3d.com",
-            "unity3d.com",
-            // AppLovin
-            "applovin.com", "rtb.applovin.com", "d.applovin.com",
-            "ads.applovin.com", "ms.applovin.com", "img.applovin.com",
-            // Chartboost
-            "chartboost.com", "live.chartboost.com", "a.chartboost.com",
-            // Vungle / Liftoff
-            "vungle.com", "ads.vungle.com", "cdn-lb.vungle.com", "liftoff.io",
-            // IronSource / Unity Level Play
-            "ironsrc.com", "supersonic.com", "ads.supersonic.com",
-            "outcome-ssp.supersonicads.com", "level-play-cdn.com",
-            // InMobi
-            "inmobi.com", "w.inmobi.com", "c.inmobi.com",
-            // Adcolony / Digital Turbine
-            "adcolony.com", "events.adcolony.com", "ads30.adcolony.com",
-            "digitalturbine.com", "fyber.com",
-            // Tapjoy
-            "tapjoy.com", "ltv.tapjoy.com",
-            // StartApp
-            "startapp.com", "startapps.com",
-            // Amazon Ads
-            "aax.amazon-adsystem.com", "amazon-adsystem.com",
-            // Snap Ads
+
+            // ── 11. General Ad Networks & Aggressive Redirectors ──
+            "amazon-adsystem.com", "aax.amazon-adsystem.com", "adsystem.amazon.com",
             "snapads.com", "tr.snapchat.com",
-            // TikTok / Pangle Ads
-            "ads.tiktok.com", "business.tiktok.com", "pangle.io", "pangleglobal.com",
-            // Mintegral / Mindworks
-            "mintegral.com", "mktkts.com", "mrdatadog.com",
-            // tlivesdk (terlihat di logcat)
-            "tlivesdk.com", "mlvbdc.tlivesdk.com",
-            // Branch (install ads redirect)
-            "branch.io", "app.link", "bnc.lt",
-            // Adjust (tracking & attribution)
-            "adjust.com", "adjust.net.in", "adjustapi.com",
-            // AppsFlyer
-            "appsflyer.com", "onelink.me",
-            // Kochava & Singular
-            "kochava.com", "control.kochava.com", "singular.net", "s.singular.net",
-            // General Ad Networks
             "mopub.com", "ads.mopub.com", "media.net", "openx.net",
             "rubiconproject.com", "pubmatic.com", "criteo.com",
             "adsrvr.org", "moatads.com", "scorecardresearch.com",
             "outbrain.com", "taboola.com", "smaato.net", "smaato.com",
-            "bidmachine.io", "smartadserver.com"
+            "bidmachine.io", "smartadserver.com", "tlivesdk.com", "mlvbdc.tlivesdk.com"
         )
     }
 
     private var vpnInterface: ParcelFileDescriptor? = null
     private var targetPackages: List<String> = emptyList()
+    private var isGlobalMode: Boolean = true
     private var vpnThread: Thread? = null
     private val shouldRun = AtomicBoolean(false)
 
@@ -222,6 +221,7 @@ class BlokirVpnService : VpnService() {
             ACTION_START -> {
                 targetPackages = intent.getStringArrayListExtra(EXTRA_TARGET_PACKAGES)
                     ?.toList() ?: emptyList()
+                isGlobalMode = intent.getBooleanExtra(EXTRA_IS_GLOBAL, targetPackages.isEmpty())
                 startVpn()
             }
         }
@@ -243,10 +243,22 @@ class BlokirVpnService : VpnService() {
     // VPN Start / Stop
     // ────────────────────────────────────────────────────────────
 
+    private fun restartVpnInterface() {
+        Log.d(TAG, "VPN already running, refreshing interface...")
+        shouldRun.set(false)
+        vpnThread?.interrupt()
+        vpnThread = null
+        try {
+            vpnInterface?.close()
+        } catch (e: Exception) {
+            Log.w(TAG, "Error closing VPN interface: ${e.message}")
+        }
+        vpnInterface = null
+    }
+
     private fun startVpn() {
         if (isRunning.get()) {
-            Log.d(TAG, "VPN already running, restarting...")
-            stopVpn()
+            restartVpnInterface()
         }
 
         try {
@@ -256,14 +268,40 @@ class BlokirVpnService : VpnService() {
                 .addAddress("10.0.0.2", 32)
                 // Set DNS server virtual yang akan dituju oleh target app
                 .addDnsServer("10.0.0.3")
-                // SPLIT-TUNNELING: HANYA route traffic yang menuju ke DNS server (10.0.0.3)
-                // Traffic lain (TCP/HTTPS/Video/Gambar) akan lewat WiFi/Seluler normal
+                // SPLIT-TUNNELING: Route DNS virtual
                 .addRoute("10.0.0.3", 32)
+                // Tangkap query DNS langsung ke DNS resolver publik terpopuler
+                // agar app/game yang mencoba bypass DNS tidak lolos
+                .addRoute("8.8.8.8", 32)
+                .addRoute("8.8.4.4", 32)
+                .addRoute("1.1.1.1", 32)
+                .addRoute("1.0.0.1", 32)
+                .addRoute("9.9.9.9", 32)
+                .addRoute("208.67.222.222", 32)
+                .addRoute("94.140.14.14", 32)
                 .setMtu(1500)
 
-            // Per-app targeting: hanya traffic dari app yang dipilih
-            // yang melewati VPN tunnel kita
-            if (targetPackages.isNotEmpty()) {
+            // IPv6 DNS leak prevention
+            try {
+                builder.addAddress("fd00::2", 128)
+                builder.addDnsServer("fd00::3")
+                builder.addRoute("fd00::3", 128)
+            } catch (e: Exception) {
+                Log.w(TAG, "IPv6 setup not supported: ${e.message}")
+            }
+
+            // Mode Perlindungan: Global vs Per-App
+            if (isGlobalMode || targetPackages.isEmpty()) {
+                // MODE GLOBAL: Lindungi seluruh perangkat secara otomatis.
+                // Setiap game/app baru langsung terlindungi tanpa perlu dicentang manual.
+                try {
+                    builder.addDisallowedApplication(packageName)
+                    Log.d(TAG, "Global Mode: Protecting all apps and games. Excluded self.")
+                } catch (e: Exception) {
+                    Log.w(TAG, "Failed to exclude self in global mode: ${e.message}")
+                }
+            } else {
+                // MODE PER-APP: Hanya aplikasi yang dipilih
                 for (pkg in targetPackages) {
                     try {
                         builder.addAllowedApplication(pkg)
@@ -272,7 +310,6 @@ class BlokirVpnService : VpnService() {
                         Log.w(TAG, "Package not found: $pkg")
                     }
                 }
-                // Selalu allow apps kita sendiri agar tidak self-block
                 try {
                     builder.addAllowedApplication(packageName)
                 } catch (e: Exception) { /* ignore */ }

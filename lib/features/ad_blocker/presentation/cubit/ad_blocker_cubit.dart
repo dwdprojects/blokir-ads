@@ -43,10 +43,14 @@ class AdBlockerCubit extends Cubit<AdBlockerState> {
     }
   }
 
-  Future<void> toggleBlocker({required List<String> targetPackages}) async {
+  Future<void> toggleBlocker({
+    required List<String> targetPackages,
+    bool isGlobalMode = true,
+  }) async {
     final current = state;
-    final isActive = current is AdBlockerActive || current is AdBlockerLoading;
+    if (current is AdBlockerLoading) return;
 
+    final isActive = current is AdBlockerActive;
     emit(AdBlockerLoading());
 
     try {
@@ -59,7 +63,13 @@ class AdBlockerCubit extends Cubit<AdBlockerState> {
           emit(AdBlockerPermissionRequired());
           return;
         }
-        await _startBlocker(targetPackages: targetPackages);
+        final started = await _startBlocker(
+          targetPackages: targetPackages,
+          isGlobalMode: isGlobalMode,
+        );
+        if (!started) {
+          emit(const AdBlockerError('Gagal memulai VPN'));
+        }
         // UI updates will be handled by _statusSubscription
       }
     } catch (e) {

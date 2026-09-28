@@ -21,7 +21,8 @@ class MainActivity : FlutterActivity() {
         private const val APPS_CHANNEL = "com.blokirads/apps"
         private const val LOGS_CHANNEL = "com.blokirads/logs"
         private const val STATUS_CHANNEL = "com.blokirads/status"
-        private const val VPN_REQUEST_CODE = 1001
+        private const val REQUEST_CODE_PERMISSION = 1001
+        private const val REQUEST_CODE_START_VPN = 1002
 
         // EventSink untuk stream log real-time ke Flutter
         var logEventSink: EventChannel.EventSink? = null
@@ -29,8 +30,10 @@ class MainActivity : FlutterActivity() {
         var statusEventSink: EventChannel.EventSink? = null
     }
 
-    private var pendingResult: MethodChannel.Result? = null
+    private var pendingPermissionResult: MethodChannel.Result? = null
+    private var pendingVpnResult: MethodChannel.Result? = null
     private var pendingPackages: List<String> = emptyList()
+    private var pendingIsGlobal: Boolean = true
 
     // ────────────────────────────────────────────────────────────
     // Flutter Engine Setup
@@ -94,22 +97,25 @@ class MainActivity : FlutterActivity() {
                         if (intent == null) {
                             result.success(true)
                         } else {
-                            pendingResult = result
-                            startActivityForResult(intent, VPN_REQUEST_CODE)
+                            pendingPermissionResult = result
+                            startActivityForResult(intent, REQUEST_CODE_PERMISSION)
                         }
                     }
 
                     "startVpn" -> {
                         val packages = call.argument<List<String>>("targetPackages")
                             ?: emptyList()
+                        val isGlobal = call.argument<Boolean>("isGlobalMode")
+                            ?: packages.isEmpty()
                         val prepareIntent = VpnService.prepare(this)
                         if (prepareIntent != null) {
-                            pendingResult = result
+                            pendingVpnResult = result
                             pendingPackages = packages
-                            startActivityForResult(prepareIntent, VPN_REQUEST_CODE)
+                            pendingIsGlobal = isGlobal
+                            startActivityForResult(prepareIntent, REQUEST_CODE_START_VPN)
                             return@setMethodCallHandler
                         }
-                        result.success(startVpnService(packages))
+                        result.success(startVpnService(packages, isGlobal))
                     }
 
                     "stopVpn" -> {
@@ -250,28 +256,42 @@ class MainActivity : FlutterActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == VPN_REQUEST_CODE) {
-            val granted = resultCode == Activity.RESULT_OK
-            if (granted && pendingPackages.isNotEmpty()) {
-                val started = startVpnService(pendingPackages)
-                pendingResult?.success(started)
-                pendingPackages = emptyList()
-            } else {
-                pendingResult?.success(granted)
+        val granted = resultCode == Activity.RESULT_OK
+
+        when (requestCode) {
+            REQUEST_CODE_PERMISSION -> {
+                pendingPermissionResult?.success(granted)
+                pendingPermissionResult = null
             }
-            pendingResult = null
+            REQUEST_CODE_START_VPN -> {
+                if (granted) {
+                    val started = startVpnService(pendingPackages, pendingIsGlobal)
+                    pendingVpnResult?.success(started)
+                } else {
+                    pendingVpnResult?.success(false)
+                }
+                pendingPackages = emptyList()
+                pendingIsGlobal = true
+                pendingVpnResult = null
+            }
         }
     }
 
-    private fun startVpnService(packages: List<String>): Boolean {
+    private fun startVpnService(packages: List<String>, isGlobal: Boolean = true): Boolean {
         return try {
-            startService(Intent(this, BlokirVpnService::class.java).apply {
+            val intent = Intent(this, BlokirVpnService::class.java).apply {
                 action = BlokirVpnService.ACTION_START
                 putStringArrayListExtra(
                     BlokirVpnService.EXTRA_TARGET_PACKAGES,
                     ArrayList(packages)
                 )
-            })
+                putExtra(BlokirVpnService.EXTRA_IS_GLOBAL, isGlobal)
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(intent)
+            } else {
+                startService(intent)
+            }
             true
         } catch (e: Exception) { false }
     }
