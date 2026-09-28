@@ -77,6 +77,7 @@ abstract class AppStrings {
   // App Selector
   String get searchApp;
   String get allApps;
+  String get all;
   String get restrictedApps;
   String get blocked;
   
@@ -93,6 +94,10 @@ abstract class AppStrings {
   String get liveDnsTerminal;
   String get waitingDnsQuery;
   String get noAppSelectedWarning;
+  String get globalProtectionMode;
+  String get globalProtectionSubtitle;
+  String get globalProtectionActiveDesc;
+  String get allAppsProtected;
 
   String get blockDomainTitle;
   String blockDomainMessage(String domain);
@@ -180,6 +185,7 @@ class _IdStrings implements AppStrings {
 
   @override String get searchApp => 'Cari aplikasi...';
   @override String get allApps => 'Semua Aplikasi';
+  @override String get all => 'Semua';
   @override String get restrictedApps => 'Dibatasi';
   @override String get blocked => 'diblokir';
 
@@ -195,6 +201,10 @@ class _IdStrings implements AppStrings {
   @override String get liveDnsTerminal => 'Live DNS Terminal';
   @override String get waitingDnsQuery => 'Menunggu DNS query...';
   @override String get noAppSelectedWarning => 'Belum ada aplikasi dipilih. Pilih aplikasi target agar blokir iklan berjalan.';
+  @override String get globalProtectionMode => 'Mode Perlindungan Global';
+  @override String get globalProtectionSubtitle => 'Lindungi semua aplikasi & game baru secara otomatis';
+  @override String get globalProtectionActiveDesc => 'Perlindungan otomatis aktif untuk semua game & aplikasi di perangkat.';
+  @override String get allAppsProtected => 'Semua Game & App';
 
   @override String get blockDomainTitle => 'Blokir Domain?';
   @override String blockDomainMessage(String domain) => 'Apakah Anda yakin ingin memblokir iklan dari:\n\n$domain\n\nJika ini bukan iklan, aplikasi target mungkin akan bermasalah.';
@@ -272,6 +282,7 @@ class _EnStrings implements AppStrings {
 
   @override String get searchApp => 'Search apps...';
   @override String get allApps => 'All Apps';
+  @override String get all => 'All';
   @override String get restrictedApps => 'Restricted';
   @override String get blocked => 'blocked';
 
@@ -287,6 +298,10 @@ class _EnStrings implements AppStrings {
   @override String get liveDnsTerminal => 'Live DNS Terminal';
   @override String get waitingDnsQuery => 'Waiting for DNS query...';
   @override String get noAppSelectedWarning => 'No apps selected. Choose target apps to enable ad blocking.';
+  @override String get globalProtectionMode => 'Global Protection Mode';
+  @override String get globalProtectionSubtitle => 'Automatically protect all new apps & games';
+  @override String get globalProtectionActiveDesc => 'Automatic protection active for all games & apps on device.';
+  @override String get allAppsProtected => 'All Games & Apps';
 
   @override String get blockDomainTitle => 'Block Domain?';
   @override String blockDomainMessage(String domain) => 'Are you sure you want to block ads from:\n\n$domain\n\nIf this is not an ad, the target app might misbehave.';
